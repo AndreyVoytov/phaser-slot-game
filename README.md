@@ -1,59 +1,54 @@
-# Phaser 3 Typescript Webpack Boilerplate
-![screenshot](https://i.imgur.com/XXyX8KO.png)
-![screenshot](https://i.imgur.com/YuzMdYi.png)
-![screenshot](https://i.imgur.com/GIdIa5q.png)
+# Phaser Slot Game
 
-# Setup
-You’ll need to install a few things before you have a working copy of the project.
+A simple HTML5 slot game using Phaser 3, TypeScript, and Webpack.
 
-## 1. Clone this repo:
+## Features
 
-Navigate into your workspace directory.
+- 3-reel, 1-row slot game
+- Three different symbols
+- Mock server request/response for spin results
+- Win condition when all symbols match
+- Background music and sound effects
+- Sound on/off control
+- Animations using GSAP
+- Spine animation integration for win/lose states
 
-Run:
+## Setup Instructions
 
-```git clone https://github.com/troyedwardsjr/phaser3-typescript-webpack.git```
+### Prerequisites
 
-## 2. Install node.js and npm:
+- Node.js and npm installed
 
-https://nodejs.org/en/
+### Installation
 
+1. Clone the repository:
 
-## 3. Install dependencies (optionally you could install [yarn](https://yarnpkg.com/)):
+   ```bash
+   git clone https://github.com/AndreyVoytov/phaser-slot-game.git
+   cd phaser-slot-game
 
-Navigate to the cloned repo’s directory.
+2. Install dependencies:
 
-Run:
+    ```bash
+    npm install
 
-```npm install```
+3. Running the Game Locally
 
-or if you choose yarn, just run ```yarn```
+    ```bash
+    npm run start
+    
+The game will open in your default browser at http://localhost:8080.
 
-## 4. Run the development server:
+4. Building for Production
 
-Run:
+    ```bash
+    npm run build
 
-```npm run dev```
+The production-ready files will be in the dist folder.
 
-This will run a server so you can run the game in a browser.
+## Dependencies
 
-Open your browser and enter localhost:3000 into the address bar.
-
-Also this will start a watch process, so you can change the source and the process will recompile and refresh the browser
-
-
-## Build for deployment:
-
-Run:
-
-```npm run deploy```
-
-This will optimize and minimize the compiled bundle.
-
-## Credits
-
-This work is based off of several existing repos:
-
-https://github.com/nkholski/phaser3-es6-webpack
-
-https://github.com/lean/phaser-es6-webpack
+- Phaser 3
+- TypeScript
+- Webpack
+- GSAP

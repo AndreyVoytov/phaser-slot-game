@@ -1,17 +1,12 @@
-import 'phaser';
+import Phaser from 'phaser';
+import PreloadScene from './scenes/PreloadScene';
+import MainScene from './scenes/MainScene';
 
-import TestScene from './scenes/PlayScene';
-
-const config:GameConfig = {
-    type: Phaser.AUTO,
-    parent: 'content',
-    width: 640,
-    height: 480,
-    resolution: 1, 
-    backgroundColor: "#EDEEC9",
-    scene: [
-      TestScene
-    ]
+const config: Phaser.Types.Core.GameConfig = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  scene: [PreloadScene, MainScene],
 };
 
 new Phaser.Game(config);
