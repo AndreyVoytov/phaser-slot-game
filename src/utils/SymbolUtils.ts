@@ -7,7 +7,7 @@ export default class SymbolUtils{
             case SymbolType.SYMBOL_2:
                 return 'symbol-2';
             case SymbolType.SYMBOL_3: 
-                return 'symbol-2';
+                return 'symbol-3';
         }
     }
 

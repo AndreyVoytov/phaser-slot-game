@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import Phaser from 'phaser';
-import { lazyInject } from '../container';
-import { TYPES } from '../types';
+import { lazyInject } from '../di-container';
+import { TYPES } from '../di-types';
 import { SymbolStore } from '../store/SymbolStore';
 
 export default class PreloadScene extends Phaser.Scene {
@@ -63,7 +63,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.audio('main-theme', 'assets/audio/main-theme.mp3');
         this.load.audio('win', 'assets/audio/win.mp3');
         
-        // Load Spine animation assets if using Spine plugin
+        // spine
+        this.load.spine('goblin', 'assets/spine/goblins.json', 'assets/spine/goblins.atlas')
     }
 
     create() {

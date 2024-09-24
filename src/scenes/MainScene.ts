@@ -3,9 +3,11 @@ import Phaser from 'phaser';
 import gsap from 'gsap';
 import Reel from '../components/Reel';
 import { AudioManager } from '../managers/AudioManager';
-import { lazyInject } from '../container';
-import { TYPES } from '../types';
+import { lazyInject } from '../di-container';
+import { TYPES } from '../di-types';
 import { SymbolStore } from '../store/SymbolStore';
+import { GoblinSpine } from "../animations/GoblinSpine";
+
 
 export default class MainScene extends Phaser.Scene {
     private reels: Reel[] = [];
@@ -18,6 +20,9 @@ export default class MainScene extends Phaser.Scene {
     @lazyInject(TYPES.SymbolStore)
     private symbolStore!: SymbolStore;
 
+    // @lazyInject(TYPES.AnimationManager)
+    // private animationManager!: AnimationManager;
+
     constructor() {
         super('MainScene');
     }
@@ -26,6 +31,10 @@ export default class MainScene extends Phaser.Scene {
         this.add.image(400, 300, 'background');
         this.add.image(400, 300, 'reel-frame');
 
+        // this.animationManager.addGoblin(this, 400, 600, 'goblin', 'walk', true);
+        let goblin = new GoblinSpine(this, 400, 200);
+
+        
         // Reels
         const initialSymbols = this.symbolStore.getInitialSymbols();
         const reelPositions = [260, 405, 550];
@@ -57,33 +66,37 @@ export default class MainScene extends Phaser.Scene {
         this.isSpinning = true;
 
         // get results from server
-        const spinResults = this.symbolStore.fetchSpinResult();
-        const spinAnimationPromises: Promise<void>[] = [];
+        this.symbolStore.fetchSpinResult().then(spinResults => {
 
-        this.reels.forEach((reel, index) => {
-            const delay = index * Phaser.Math.Between(100, 200); // Random delay for spin start
-            const promise = new Promise<void>((resolve) => {
-                this.time.delayedCall(delay, () => {
-                    reel.spin(spinResults[index]).then(() => {
-                        resolve();
+            const spinAnimationPromises: Promise<void>[] = [];
+
+            this.reels.forEach((reel, index) => {
+                const delay = index * Phaser.Math.Between(100, 200); // Random delay for spin start
+                const promise = new Promise<void>((resolve) => {
+                    this.time.delayedCall(delay, () => {
+                        reel.spin(spinResults[index]).then(() => {
+                            resolve();
+                        });
                     });
                 });
+                spinAnimationPromises.push(promise);
             });
-            spinAnimationPromises.push(promise);
-        });
-        
-        // Wait for all reels to finish spinning
-        Promise.all(spinAnimationPromises).then(() => {
-            // Check for win
-            if (this.reels.every((val) => val.getCurrentSymbol() == this.reels[0].getCurrentSymbol())) {
-                this.sound.play('win');
-                this.showWinAnimation();
-            } else {
-                this.showLoseAnimation();
-            }
+            
+            // Wait for all reels to finish spinning
+            Promise.all(spinAnimationPromises).then(() => {
 
-            this.isSpinning = false;
-        });
+                // Check for win
+                if (this.reels.every((val) => val.getCurrentSymbolType() == this.reels[0].getCurrentSymbolType())) {
+                    this.sound.play('win');
+                    this.showWinAnimation();
+                } else {
+                    this.showLoseAnimation();
+                }
+    
+                this.isSpinning = false;
+            });
+        })
+        
     }
 
     private showWinAnimation() {

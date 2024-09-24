@@ -1,6 +1,6 @@
 import { Container } from "inversify";
 import { AudioManager } from "./managers/AudioManager";
-import { TYPES } from "./types";
+import { TYPES } from "./di-types";
 import getDecorators from "inversify-inject-decorators";
 import { SymbolStore } from "./store/SymbolStore";
 

@@ -31,7 +31,8 @@ module.exports = {
     // Add the CopyWebpackPlugin to copy assets to the dist folder
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'assets', to: 'assets' }, // Copies all files from src/assets to dist/assets
+        { from: 'assets', to: 'assets' },
+        { from: 'index.html', to: '' },
       ],
     }),
   ],

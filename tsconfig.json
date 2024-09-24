@@ -11,5 +11,11 @@
       "outDir": "dist",
       "esModuleInterop": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "typeRoots": [
+      "src/types",
+      "src/types/phaser",
+      "node_modules/@types",
+      "node_module/phaser/types"
+    ]
   }
