@@ -1,5 +1,13 @@
 export default class SymbolUtils{
 
+    public static getMaxSymbolsShift() : number {
+        return 15;
+    }
+
+    public static getMinSymbolsShift() : number {
+        return 9;
+    }
+
     public static getImageBySymbol(symbol:SymbolType): string{
         switch(symbol){
             case SymbolType.SYMBOL_1: 
@@ -9,14 +17,6 @@ export default class SymbolUtils{
             case SymbolType.SYMBOL_3: 
                 return 'symbol-3';
         }
-    }
-
-    public static getMaxSymbolsShift() : number {
-        return 15;
-    }
-
-    public static getMinSymbolsShift() : number {
-        return 9;
     }
 
     public static getSymbolText(symbol: SymbolType){
