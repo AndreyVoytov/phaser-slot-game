@@ -33,13 +33,8 @@ export default class PreloadScene extends Phaser.Scene {
       this.scene.start('LoadingScene');
     })
 
-    //for test TODO remove
-    for (let i = 0; i < 1000; i++) {
-      this.load.image(`dummy${i}`, `path/to/smallDummyImage.png`);
-    }
-
     this.load.atlas('loading-atlas', 'assets/art/loading-atlas.png', 'assets/art/loading-atlas.json');
-    
+
     // this.load.image('progress', 'assets/art/progress.png');
     // this.load.image('progress-bg', 'assets/art/progress-bg.png');
 

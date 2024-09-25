@@ -64,12 +64,7 @@ export default class PreloadScene extends Phaser.Scene {
       this.symbolStore.setInitialSymbols(res);
     });
 
-    //for test TODO remove
-    for (let i = 0; i < 1000; i++) {
-      this.load.image(`dummy${i}`, `path/to/smallDummyImage.png`);
-    }
-
-
+    
     /*** Loading assets ***/
 
     // art
