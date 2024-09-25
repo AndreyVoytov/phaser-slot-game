@@ -36,7 +36,7 @@ export default class MainScene extends Phaser.Scene {
         // Add background, frame and goblin
         const centerX = this.scale.width/2;
         this.add.image(centerX, 430, 'background');
-        this.add.image(centerX, 400, 'reel-frame');
+        this.add.image(centerX, 400, 'main-atlas', 'reel-frame');
         this.goblin = new GoblinSpine(this, centerX, 265);
         
         // Add reels
@@ -48,11 +48,11 @@ export default class MainScene extends Phaser.Scene {
         }
 
         // Add spin button
-        this.spinButton = this.add.image(centerX, 730, 'spin-button').setInteractive();
+        this.spinButton = this.add.image(centerX, 730, 'main-atlas', 'spin-button').setInteractive();
         this.spinButton.on('pointerup', () => {
             if(!this.isSpinning){
                 this.isSpinning = true;
-                this.spinButton.setTexture('spin-button-pressed');
+                this.spinButton.setTexture('main-atlas', 'spin-button-pressed');
                 this.sound.play('click', {volume: 0.4});
 
                 // Start reels animations
@@ -70,11 +70,11 @@ export default class MainScene extends Phaser.Scene {
 
         // Add sound control button
         const soundImageKey = this.audioManager.getSoundEnabled()? 'sound-on' : 'sound-off';
-        const soundButton = this.add.image(this.game.scale.width - 50, 50, soundImageKey).setInteractive();
+        const soundButton = this.add.image(this.game.scale.width - 50, 50, 'main-atlas', soundImageKey).setInteractive();
         soundButton.setScale(0.7);
         soundButton.on('pointerup', () => {
             let soundOn = this.audioManager.switchSoundEnabled();
-            soundButton.setTexture(soundOn? 'sound-on' : 'sound-off');
+            soundButton.setTexture('main-atlas', soundOn? 'sound-on' : 'sound-off');
         });
 
         // Run audio on first touch
@@ -120,7 +120,7 @@ export default class MainScene extends Phaser.Scene {
                     // Delay to enjoy win
                     this.time.delayedCall(700, () => {
                         this.isSpinning = false;
-                        this.spinButton.setTexture('spin-button');
+                        this.spinButton.setTexture('main-atlas', 'spin-button');
                     });
 
                 // Process loose
@@ -132,7 +132,7 @@ export default class MainScene extends Phaser.Scene {
                     this.goblin.updateAnimation();
 
                     this.isSpinning = false;
-                    this.spinButton.setTexture('spin-button');
+                    this.spinButton.setTexture('main-atlas', 'spin-button');
                 }
             });
         })

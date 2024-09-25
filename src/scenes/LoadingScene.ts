@@ -34,9 +34,9 @@ export default class PreloadScene extends Phaser.Scene {
     });
 
     // Display a loading progress bar
-    let progressWidth = this.textures.get('progress-bg').source[0].width;
-    this.add.image(centerX - progressWidth/2, centerY + 100, 'progress-bg').setOrigin(0, 0.5);
-    const progressBar = this.add.image(centerX - progressWidth/2, centerY + 100, 'progress').setOrigin(0, 0.5);
+    let progressWidth = 400;
+    this.add.image(centerX - progressWidth/2, centerY + 100, 'loading-atlas', 'progress-bg').setOrigin(0, 0.5);
+    const progressBar = this.add.image(centerX - progressWidth/2, centerY + 100, 'loading-atlas','progress').setOrigin(0, 0.5);
 
     this.load.on('progress', (value) => {
       const cropWidth = progressBar.width * value;
@@ -64,6 +64,7 @@ export default class PreloadScene extends Phaser.Scene {
       this.symbolStore.setInitialSymbols(res);
     });
 
+    //for test TODO remove
     for (let i = 0; i < 1000; i++) {
       this.load.image(`dummy${i}`, `path/to/smallDummyImage.png`);
     }
@@ -73,15 +74,17 @@ export default class PreloadScene extends Phaser.Scene {
 
     // art
     this.load.image('background', 'assets/art/background.png');
-    this.load.image('reel-frame', 'assets/art/reel-frame.png');
-    this.load.image('reel-frame-hand', 'assets/art/reel-frame-hand.png');
-    this.load.image('spin-button', 'assets/art/spin-button.png');
-    this.load.image('spin-button-pressed', 'assets/art/spin-button-pressed.png');
-    this.load.image('sound-on', 'assets/art/sound-on.png');
-    this.load.image('sound-off', 'assets/art/sound-off.png');
-    this.load.image('symbol-1', 'assets/art/symbol-1.png');
-    this.load.image('symbol-2', 'assets/art/symbol-2.png');
-    this.load.image('symbol-3', 'assets/art/symbol-3.png');
+    this.load.atlas('main-atlas', 'assets/art/main-atlas.png', 'assets/art/main-atlas.json');
+
+    // this.load.image('reel-frame', 'assets/art/reel-frame.png');
+    // this.load.image('reel-frame-hand', 'assets/art/reel-frame-hand.png');
+    // this.load.image('spin-button', 'assets/art/spin-button.png');
+    // this.load.image('spin-button-pressed', 'assets/art/spin-button-pressed.png');
+    // this.load.image('sound-on', 'assets/art/sound-on.png');
+    // this.load.image('sound-off', 'assets/art/sound-off.png');
+    // this.load.image('symbol-1', 'assets/art/symbol-1.png');
+    // this.load.image('symbol-2', 'assets/art/symbol-2.png');
+    // this.load.image('symbol-3', 'assets/art/symbol-3.png');
 
     // sound
     this.load.audio('main-theme', 'assets/audio/main-theme.mp3');

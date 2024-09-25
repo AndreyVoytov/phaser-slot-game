@@ -28,7 +28,7 @@ export default class Reel {
         
         for (let i = 0; i < this.pattern.length * reelSymbolsCount; i++) {
             const symbol = this.pattern[i % this.pattern.length];
-            const symbolSprite = this.scene.add.sprite(0, i * this.symbolHeight, SymbolUtils.getImageBySymbol(symbol));
+            const symbolSprite = this.scene.add.sprite(0, i * this.symbolHeight, 'main-atlas', SymbolUtils.getImageBySymbol(symbol));
             this.container.add(symbolSprite);
         }
         this.applyMask();
