@@ -9,13 +9,14 @@
       "emitDecoratorMetadata": true,
       "sourceMap": true,
       "outDir": "dist",
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      "skipLibCheck": true
     },
     "include": ["src/**/*"],
     "typeRoots": [
       "src/types",
       "src/types/phaser",
       "node_modules/@types",
-      "node_module/phaser/types"
+      "node_modules/phaser/types"
     ]
   }

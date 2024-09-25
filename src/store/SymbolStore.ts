@@ -5,7 +5,9 @@ import SymbolUtils from "../utils/SymbolUtils";
 @injectable()
 export class SymbolStore{
 
-    //stored data 
+    /***  Stored data  ***/
+
+    // Start symbols for each reel obtained from server
     private initialSymbols!: SymbolType[][];
 
     public setInitialSymbols(symbols: SymbolType[][]) : void {
@@ -16,11 +18,14 @@ export class SymbolStore{
         return this.initialSymbols;
     }
 
-    //mock method for spin result request
+
+    /***  Mock methods for server requests  ***/
+
+    // Mock method for spin result request
     public fetchSpinResult() : Promise<number[]> {
         return this.delay(100).then( () =>{
-                let min = SymbolUtils.getMinSymbolsShift();
-                let max = SymbolUtils.getMaxSymbolsShift();
+                const min = SymbolUtils.getMinSymbolsShift();
+                const max = SymbolUtils.getMaxSymbolsShift();
                 return [
                     Phaser.Math.Between(min, max), 
                     Phaser.Math.Between(min, max), 
@@ -31,7 +36,7 @@ export class SymbolStore{
     }
     
 
-    //mock method for inital symbols request
+    // Mock method for inital symbols request
     public fetchInitialSymbols() : Promise<SymbolType[][]> {
         return this.delay(100).then( () =>{
                 return [

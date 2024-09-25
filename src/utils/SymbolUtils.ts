@@ -18,6 +18,17 @@ export default class SymbolUtils{
     public static getMinSymbolsShift() : number {
         return 9;
     }
+
+    public static getSymbolText(symbol: SymbolType){
+        switch(symbol){
+            case SymbolType.SYMBOL_1: 
+                return 'acorn';
+            case SymbolType.SYMBOL_2:
+                return 'mushroom';
+            case SymbolType.SYMBOL_3: 
+                return 'snail';
+        }
+    }
 }
 
 export enum SymbolType{

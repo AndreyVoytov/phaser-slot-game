@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import SymbolUtils from '../utils/SymbolUtils';
 import { SymbolType } from '../enums/SymbolType';
+import { gsap } from 'gsap';
 
 export default class Reel {
     private scene: Phaser.Scene;
@@ -12,7 +13,6 @@ export default class Reel {
     private symbolWidth: number;
     private currentSymbol!: number;
 
-    //TODO inherit class from Container?
     constructor(scene: Phaser.Scene, x: number, y: number, pattern: SymbolType[]) {
         this.scene = scene;
         this.positionX = x;
@@ -24,7 +24,7 @@ export default class Reel {
         this.container = this.scene.add.container(this.positionX, this.positionY);
     
         //big enough number of symbols for one spin
-        let reelSymbolsCount = (Math.ceil(SymbolUtils.getMaxSymbolsShift() / pattern.length) + 1) * pattern.length; 
+        const reelSymbolsCount = (Math.ceil(SymbolUtils.getMaxSymbolsShift() / pattern.length) + 1) * pattern.length; 
         
         for (let i = 0; i < this.pattern.length * reelSymbolsCount; i++) {
             const symbol = this.pattern[i % this.pattern.length];
@@ -37,35 +37,36 @@ export default class Reel {
     public getCurrentSymbolType() : SymbolType {
         return this.pattern[this.currentSymbol % this.pattern.length];
     }
-
+    
     //spin logic
     public spin(shiftSymbols: number): Promise<void> {
+
         return new Promise((resolve) => {
-            let toSymbolPosition = this.currentSymbol + shiftSymbols;
-            let toY = this.getYBySymbolPosition(toSymbolPosition);
-            let duration = 1000 + shiftSymbols * 75; // Adjust duration based on shift symbols
+            const toSymbolPosition = this.currentSymbol + shiftSymbols;
+            const toY = this.getYBySymbolPosition(toSymbolPosition);
+            const duration = 1000 + shiftSymbols * 75; // Adjust duration based on shift symbols
     
-            this.scene.tweens.add({
-                targets: this.container,
+            const self = this;
+            gsap.to(this.container, {
                 y: toY,
-                ease: 'Cubic.easeOut',
-                duration: duration,
-                onComplete: () => {
+                ease: 'power1.out',
+                duration: duration / 1000,
+                onComplete: function() {
                     //spin reel back secretly
-                    this.container.y = this.getYBySymbolPosition(toSymbolPosition % this.pattern.length);
-                    this.currentSymbol = toSymbolPosition % this.pattern.length;
+                    self.container.y = self.getYBySymbolPosition(toSymbolPosition % self.pattern.length);
+                    self.currentSymbol = toSymbolPosition % self.pattern.length;
                     resolve();
-                },
+                }
             });
         });
     }
 
     private getYBySymbolPosition(symbolPosition: number) : number {
-        return -symbolPosition * this.symbolHeight + this.positionY; //TODO remove this.positionY?
+        return -symbolPosition * this.symbolHeight + this.positionY;
     }
 
     private applyMask() : void {
-        let maskHeight = 210;
+        const maskHeight = 210;
         const maskShape = this.scene.add.rectangle(
             this.positionX,
             this.positionY,

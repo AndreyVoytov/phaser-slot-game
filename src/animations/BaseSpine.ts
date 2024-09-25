@@ -1,29 +1,26 @@
-export default abstract class BaseSpine<SkinType, AnimationType, AttachmentType, SlotType> {
-    protected spineState: SpineState<SkinType, AnimationType, AttachmentType, SlotType>;
+export default abstract class BaseSpine<SkinType, AnimationType> {
+    protected spineState: SpineState<SkinType, AnimationType>;
     protected spineObject: SpineGameObject;
 
     constructor(scene: Phaser.Scene, key: string, x: number, y: number) {
-        this.spineObject = scene.make.spine({x: x, y: y, key: key, loop: true});//, scene.sys.plugins.get('SpinePlugin') as SpinePlugin, x, y, key, '', true);
+        this.spineObject = scene.make.spine({x: x, y: y, key: key, loop: true, scale: 0.7});
         this.spineState = this.getDefaultSpineState();
-        this.updateParameters();
+        this.updateAnimation();
     }
 
-    public updateParameters(): void {
-        this.spineObject.setAttachment(this.spineState.slot as any, this.spineState.attachment as any);
+    public updateAnimation(): void {
         this.spineObject.play(this.spineState.animation as any, true);
         this.spineObject.setSkinByName(this.spineState.skin as any);
     }
 
-    public getSpineState() : SpineState<SkinType, AnimationType, AttachmentType, SlotType> {
+    public getSpineState() : SpineState<SkinType, AnimationType> {
         return this.spineState;
     }
 
-    abstract getDefaultSpineState() : SpineState<SkinType, AnimationType, AttachmentType, SlotType>;
+    abstract getDefaultSpineState() : SpineState<SkinType, AnimationType>;
 }
 
-export interface SpineState<SkinType, AnimationType, AttachmentType, SlotType> {
+export interface SpineState<SkinType, AnimationType> {
     skin: SkinType;
     animation: AnimationType;
-    attachment: AttachmentType;
-    slot: SlotType;
 }

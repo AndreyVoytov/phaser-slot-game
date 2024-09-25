@@ -3,21 +3,36 @@ import { injectable } from "inversify";
 @injectable()
 export class AudioManager{
     
+    private scene!: Phaser.Scene;
     private mainTheme!: Phaser.Sound.BaseSound;
-    private soundOn: boolean = false;
 
-    public playMainTheme(scene:Phaser.Scene) : void {
-
-        // Start background music if not already playing
+    public init(scene:Phaser.Scene) : void {
+        console.log("init audio")
+        this.scene = scene;
+        scene.sound.mute = !this.getSoundEnabled();
+    }
+    
+    // Start background music if not already playing
+    public playMainTheme() : void {
         if (!this.mainTheme || !this.mainTheme.isPlaying) {
-            this.mainTheme = scene.sound.add('main-theme', { loop: true });
-            this.mainTheme.play();
+            this.mainTheme = this.scene.sound.add('main-theme', { loop: true });
+            this.mainTheme.play({volume: 0.1});
         }
     }
 
-    public switchSound(scene) : void {
-        this.soundOn = !this.soundOn;
-        scene.sound.mute = !this.soundOn;
+    public switchSoundEnabled() : boolean {
+        const soundEnabled = this.getSoundEnabled();
+        this.scene.sound.mute = soundEnabled;
+        this.setSoundEnabled(!soundEnabled);
+        return !soundEnabled;
     }
+
+    public getSoundEnabled() : boolean {
+        return localStorage.getItem('soundEnabled') != 'false';
+    }
+
+    private setSoundEnabled(enabled: boolean) : void {
+        localStorage.setItem('soundEnabled', enabled.toString());
+    } 
 
 }
