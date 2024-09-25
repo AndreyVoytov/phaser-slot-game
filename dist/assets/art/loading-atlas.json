@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "loading-atlas.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 402,
+				"h": 169
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "progress-bg",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 87
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 400,
+						"h": 85
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 400,
+						"h": 85
+					}
+				},
+				{
+					"filename": "progress",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 87
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 5,
+						"w": 395,
+						"h": 80
+					},
+					"frame": {
+						"x": 1,
+						"y": 88,
+						"w": 395,
+						"h": 80
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:2cdb7d641fe1755e468636b239b2f793:052b5b38040b87d84d2a76b236045d45:0c7f66dbc9266059ef2f5f7711a2eb2a$"
+	}
+}
