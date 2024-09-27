@@ -9,6 +9,7 @@ import { SymbolStore } from '../store/SymbolStore';
 import { GoblinAnimationType, GoblinSkinType, GoblinSpine } from "../animations/GoblinSpine";
 import { SymbolType } from "../enums/SymbolType";
 import SymbolUtils from "../utils/SymbolUtils";
+import SpriteUtils from "../utils/SpriteUtils";
 
 
 export default class MainScene extends Phaser.Scene {
@@ -28,15 +29,15 @@ export default class MainScene extends Phaser.Scene {
     private symbolStore!: SymbolStore;
 
     constructor() {
-        super('MainScene');
+        super('main');
     }
 
     create() {
                 
         // Add background, frame and goblin
         const centerX = this.scale.width/2;
-        this.add.image(centerX, 430, 'background');
-        this.add.image(centerX, 400, 'main-atlas', 'reel-frame');
+        SpriteUtils.addImage(this, centerX, 430, 'background');
+        SpriteUtils.addImage(this, centerX, 400, 'reel-frame');
         this.goblin = new GoblinSpine(this, centerX, 265);
         
         // Add reels
@@ -48,7 +49,7 @@ export default class MainScene extends Phaser.Scene {
         }
 
         // Add spin button
-        this.spinButton = this.add.image(centerX, 730, 'main-atlas', 'spin-button').setInteractive();
+        this.spinButton = SpriteUtils.addImage(this, centerX, 730, 'spin-button').setInteractive();
         this.spinButton.on('pointerup', () => {
             if(!this.isSpinning){
                 this.isSpinning = true;
@@ -70,7 +71,7 @@ export default class MainScene extends Phaser.Scene {
 
         // Add sound control button
         const soundImageKey = this.audioManager.getSoundEnabled()? 'sound-on' : 'sound-off';
-        const soundButton = this.add.image(this.game.scale.width - 50, 50, 'main-atlas', soundImageKey).setInteractive();
+        const soundButton = SpriteUtils.addImage(this, this.game.scale.width - 50, 50, soundImageKey).setInteractive();
         soundButton.setScale(0.7);
         soundButton.on('pointerup', () => {
             let soundOn = this.audioManager.switchSoundEnabled();

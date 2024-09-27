@@ -4,17 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --open",
-    "build": "webpack --mode production"
+    "dev": "webpack serve --open",
+    "build": "webpack --mode production",
+    "img": "node scripts/generateImageConfig.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.11.1",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
     "copy-webpack-plugin": "^12.0.2",
+    "eslint": "^9.11.1",
+    "globals": "^15.9.0",
     "phaser": "^3.85.2",
     "ts-loader": "^9.5.1",
     "typescript": "^5.6.2",
+    "typescript-eslint": "^8.7.0",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.1.0"

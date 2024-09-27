@@ -4,6 +4,7 @@ import { lazyInject } from '../di-container';
 import { TYPES } from '../di-types';
 import { SymbolStore } from '../store/SymbolStore';
 import { gsap } from 'gsap';
+import SpriteUtils from "../utils/SpriteUtils";
 
 export default class PreloadScene extends Phaser.Scene {
 
@@ -11,7 +12,7 @@ export default class PreloadScene extends Phaser.Scene {
   private symbolStore!: SymbolStore;
 
   constructor() {
-    super('LoadingScene');
+    super('loading');
   }
 
   create() {
@@ -22,7 +23,7 @@ export default class PreloadScene extends Phaser.Scene {
     const centerY = height / 2;
 
     // Small animation
-    const symbol = this.add.image(centerX, centerY, 'symbol1');
+    const symbol = SpriteUtils.addImage(this, centerX, centerY, 'symbol1');
     gsap.to(symbol, {
       y: centerY + 10, 
       scaleX: 1.1,
@@ -35,8 +36,8 @@ export default class PreloadScene extends Phaser.Scene {
 
     // Display a loading progress bar
     let progressWidth = 400;
-    this.add.image(centerX - progressWidth/2, centerY + 100, 'loading-atlas', 'progress-bg').setOrigin(0, 0.5);
-    const progressBar = this.add.image(centerX - progressWidth/2, centerY + 100, 'loading-atlas','progress').setOrigin(0, 0.5);
+    SpriteUtils.addImage(this, centerX - progressWidth/2, centerY + 100, 'progress-bg').setOrigin(0, 0.5);
+    const progressBar = SpriteUtils.addImage(this, centerX - progressWidth/2, centerY + 100, 'progress').setOrigin(0, 0.5);
 
     this.load.on('progress', (value) => {
       const cropWidth = progressBar.width * value;
@@ -44,7 +45,7 @@ export default class PreloadScene extends Phaser.Scene {
     });
 
     this.load.on('complete', () => {
-      this.scene.start('MainScene');
+      this.scene.start('main');
     });
 
     // Display 'Loading...' text
@@ -68,18 +69,7 @@ export default class PreloadScene extends Phaser.Scene {
     /*** Loading assets ***/
 
     // art
-    this.load.image('background', 'assets/art/background.png');
-    this.load.atlas('main-atlas', 'assets/art/main-atlas.png', 'assets/art/main-atlas.json');
-
-    // this.load.image('reel-frame', 'assets/art/reel-frame.png');
-    // this.load.image('reel-frame-hand', 'assets/art/reel-frame-hand.png');
-    // this.load.image('spin-button', 'assets/art/spin-button.png');
-    // this.load.image('spin-button-pressed', 'assets/art/spin-button-pressed.png');
-    // this.load.image('sound-on', 'assets/art/sound-on.png');
-    // this.load.image('sound-off', 'assets/art/sound-off.png');
-    // this.load.image('symbol-1', 'assets/art/symbol-1.png');
-    // this.load.image('symbol-2', 'assets/art/symbol-2.png');
-    // this.load.image('symbol-3', 'assets/art/symbol-3.png');
+    SpriteUtils.loadArtForScene(this, 'main');
 
     // sound
     this.load.audio('main-theme', 'assets/audio/main-theme.mp3');

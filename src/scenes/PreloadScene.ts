@@ -1,11 +1,12 @@
 import "reflect-metadata";
 import Phaser from 'phaser';
 import { gsap } from 'gsap';
+import SpriteUtils from "../utils/SpriteUtils";
 
 export default class PreloadScene extends Phaser.Scene {
 
   constructor() {
-    super('PreloadScene');
+    super('preload');
   }
 
   preload() {
@@ -17,7 +18,7 @@ export default class PreloadScene extends Phaser.Scene {
     const centerY = this.scale.height/2;
 
     // Small animation
-    const symbol = this.add.image(centerX, centerY, 'symbol1');
+    const symbol = SpriteUtils.addImage(this, centerX, centerY, 'symbol1');
     gsap.to(symbol, {
       y: centerY + 10, 
       scaleX: 1.1,
@@ -30,13 +31,12 @@ export default class PreloadScene extends Phaser.Scene {
 
     // Loading assets
     this.load.on('complete', () => {
-      this.scene.start('LoadingScene');
+      this.scene.start('loading');
     })
 
-    this.load.atlas('loading-atlas', 'assets/art/loading-atlas.png', 'assets/art/loading-atlas.json');
+    /*** Loading assets ***/
 
-    // this.load.image('progress', 'assets/art/progress.png');
-    // this.load.image('progress-bg', 'assets/art/progress-bg.png');
+    SpriteUtils.loadArtForScene(this, 'loading');
 
     this.load.start();
   }

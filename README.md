@@ -35,7 +35,7 @@ A simple HTML5 slot game using Phaser 3, TypeScript, and Webpack.
 3. Running the Game Locally
 
     ```bash
-    npm run start
+    npm run dev
     
 The game will open in your default browser at http://localhost:8080.
 

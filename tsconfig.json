@@ -4,6 +4,8 @@
       "module": "es6",
       "strict": true,
       "noImplicitAny": false,
+      "strictNullChecks": true,
+      // "noUncheckedIndexedAccess": true,
       "moduleResolution": "node",
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
@@ -12,7 +14,7 @@
       "esModuleInterop": true,
       "skipLibCheck": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "scripts"],
     "typeRoots": [
       "src/types",
       "src/types/phaser",
