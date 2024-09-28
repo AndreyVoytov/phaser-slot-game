@@ -5,7 +5,6 @@ export default class SpriteUtils{
     public static addImage(scene: Phaser.Scene, x: number, y: number, key: string): Phaser.GameObjects.Image {
         if(ATLAS_BY_IMAGE_MAPPING.has(key)) {
             return scene.add.image(x, y, ATLAS_BY_IMAGE_MAPPING.get(key)!, key);
-            ATLAS_BY_IMAGE_MAPPING[key];
         }
         return scene.add.image(x, y, key);
     }

@@ -1,12 +1,11 @@
 // auto-generated
 
 export const ALL_ATLASES_LIST: Map<string, string> = new Map([
-    ['loading-atlas', 'assets/art-loading/loading-atlas'],
-    ['loading-atlas2', 'assets/art-loading/loading-atlas2'],
-    ['main-atlas', 'assets/art-main/main-atlas']
+    ['loading-atlas', 'assets/art-loading/loading-atlas.json'],
+    ['main-atlas', 'assets/art-main/main-atlas.json']
 ]);
 
-export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
+export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([ 
     ['loading', new Map([
     // No entries
     ])],
@@ -16,21 +15,18 @@ export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
     ])]
 ]);
 
-export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
+export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([ 
     ['loading', new Map([
-        ['loading-atlas', 'assets/art-loading/loading-atlas'],
-        ['loading-atlas2', 'assets/art-loading/loading-atlas2']
+        ['loading-atlas', 'assets/art-loading/loading-atlas.json']
     ])],
     ['main', new Map([
-        ['main-atlas', 'assets/art-main/main-atlas']
+        ['main-atlas', 'assets/art-main/main-atlas.json']
     ])]
 ]);
 
-export const ATLAS_BY_IMAGE_MAPPING: Map<string, string> = new Map([
+export const ATLAS_BY_IMAGE_MAPPING: Map<string, string> = new Map([ 
     ['progress-bg', 'loading-atlas'],
     ['progress', 'loading-atlas'],
-    ['progress-bg', 'loading-atlas2'],
-    ['progress', 'loading-atlas2'],
     ['reel-frame', 'main-atlas'],
     ['spin-button', 'main-atlas'],
     ['spin-button-pressed', 'main-atlas'],
