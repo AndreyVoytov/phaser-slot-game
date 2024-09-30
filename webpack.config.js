@@ -32,11 +32,13 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'index.html', to: '' },
-        { from: 'assets', to: 'assets', globOptions: {
-          ignore: [
-            '**/src/**',
-          ],
-        }, },
+        { from: 'assets', to: 'assets', 
+          // globOptions: {
+          //   ignore: [
+          //     '**/_*/**',
+          //   ],
+          // },
+        },
       ],
     }),
   ],

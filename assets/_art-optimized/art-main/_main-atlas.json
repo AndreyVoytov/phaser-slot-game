@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "main-atlas.png",
+			"image": "_main-atlas.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 994,

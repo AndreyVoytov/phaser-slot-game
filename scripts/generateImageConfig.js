@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-// Определяем путь к корневой директории assets
+// Определяем пути к директориям
 const assetsDir = path.join(__dirname, '..', 'assets');
+const optimizedDir = path.join(assetsDir, '_art-optimized');
 
 // Функция для рекурсивного получения всех файлов из директории и её подпапок
 const getAllFilesRecursively = (dir, files = []) => {
@@ -10,10 +11,7 @@ const getAllFilesRecursively = (dir, files = []) => {
     items.forEach(item => {
         const fullPath = path.join(dir, item);
         if (fs.statSync(fullPath).isDirectory()) {
-            // Игнорируем папки, начинающиеся с '_'
-            if (!path.basename(fullPath).startsWith('_')) {
-                getAllFilesRecursively(fullPath, files);
-            }
+            getAllFilesRecursively(fullPath, files);
         } else {
             files.push(fullPath);
         }
@@ -21,38 +19,99 @@ const getAllFilesRecursively = (dir, files = []) => {
     return files;
 };
 
-// Функция для обработки папки с артом
+// Функция для обработки папки с артом, проверяя сначала _art-optimized
 const processArtFolder = (folder) => {
-    const folderSuffix = path.basename(folder).replace('art-', '').toLowerCase(); // Сохраняем окончание папки (например, 'main', 'loading')
-    const allFiles = getAllFilesRecursively(folder);
-    
-    // Фильтруем изображения и JSON файлы
-    const imageFiles = allFiles.filter(file => file.endsWith('.png') || file.endsWith('.jpg'));
-    const jsonFiles = allFiles.filter(file => file.endsWith('.json'));
-    
-    // Генерация маппингов для изображений
+    const folderSuffix = path.basename(folder).replace('art-', '').toLowerCase(); // Получаем название папки (например, 'main', 'loading')
+
+    const allFiles = getAllFilesRecursively(folder); // Получаем все файлы в папке
+
+    // Фильтруем изображения на две категории:
+    const imageFiles = allFiles.filter(file => (file.endsWith('.png') || file.endsWith('.jpg')) && !file.includes('_')); // Обычные изображения
+    const customImageFiles = allFiles.filter(file => file.includes('_') && (file.endsWith('.png') || file.endsWith('.jpg'))); // Изображения в папках с префиксом '_'
+    const jsonFiles = allFiles.filter(file => file.endsWith('.json')); // Атласы (JSON-файлы)
+
+    // Маппинг для изображений первой категории (обычные изображения)
     const imageList = new Map();
-    imageFiles
-        .filter(file => !jsonFiles.some(jsonFile => path.basename(jsonFile, '.json') === path.basename(file, '.png')))
-        .forEach(file => {
-            const name = path.basename(file, path.extname(file));
-            const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
+    imageFiles.forEach(file => {
+        const name = path.basename(file, path.extname(file));
+        const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
+        const optimizedImagePath = path.join(optimizedDir, relativePath);
+
+        // Check for duplicates
+        checkForDuplicateKeys(name, file);
+
+        if (fs.existsSync(optimizedImagePath)) {
             imageList.set(name, `assets/${relativePath}`);
-        });
-    
-    // Генерация маппингов для атласов
+        } else {
+            console.warn('\x1b[33m%s\x1b[0m', `Warning: Optimized image not found for ${file}, using original`);
+            imageList.set(name, `assets/${relativePath}`);
+        }
+    });
+
+
+    // Маппинг для атласов
     const atlasList = new Map();
     jsonFiles.forEach(file => {
-        const name = path.basename(file, '.json');
-        const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
-        atlasList.set(name, `assets/${relativePath}`); // Убираем .json
+        const name = path.basename(file, '.json'); // Имя атласа
+        const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/'); // Путь к файлу
+        const optimizedAtlasPath = path.join(optimizedDir, relativePath); // Путь к оптимизированной версии атласа
+
+        // Если оптимизированный атлас существует — используем его
+        if (!atlasList.has(name)) { // Проверяем на дублирование
+            if (fs.existsSync(optimizedAtlasPath)) {
+                atlasList.set(name, `assets/${path.relative(assetsDir, optimizedAtlasPath).replace(/\\/g, '/')}`);
+            } else {
+                // Если атласа нет — используем оригинал и выводим предупреждение
+                console.warn('\x1b[33m%s\x1b[0m', `Warning: Optimized atlas not found for ${name}, using original from ${relativePath}`);
+                atlasList.set(name, `assets/${relativePath}`);
+            }
+        }
     });
 
     return {
         folderSuffix,
         imageList,
-        atlasList
+        atlasList,
+        customImageFiles // Изображения из папок с префиксом '_', которые нужно обработать отдельно
     };
+};
+
+// Проверка дубликатов
+const checkForDuplicateKeys = (key, fileName) => {
+    if (allKeys.has(key)) {
+        console.error('\x1b[31m%s\x1b[0m', `Duplicate key found: ${key} from ${fileName}`);
+    } else {
+        allKeys.add(key);
+    }
+};
+
+// Обработка подпапок с префиксом '_' и их изображений
+const processCustomFolders = (customImageFiles, folderSuffix) => {
+    const customAtlasData = [];
+    const customImageList = new Map();
+
+    customImageFiles.forEach(file => {
+        const subFolderPath = path.dirname(file); // Папка, где лежит файл
+        const jsonFileName = `${path.basename(subFolderPath)}.json`; // Имя JSON файла для атласа
+        const optimizedJsonFilePath = path.join(optimizedDir, path.relative(assetsDir, path.dirname(subFolderPath)), jsonFileName);
+
+        // Проверяем наличие оптимизированного атласа
+        if (fs.existsSync(optimizedJsonFilePath)) {
+            customAtlasData.push({ name: jsonFileName.replace('.json', ''), path: `assets/${path.relative(assetsDir, optimizedJsonFilePath).replace(/\\/g, '/')}` });
+        } else {
+            console.warn('\x1b[33m%s\x1b[0m', `Warning: Custom atlas ${jsonFileName} not found at path: ${optimizedJsonFilePath}. Adding individual images.`);
+
+            // Если атлас не найден, добавляем изображения отдельно
+            const name = path.basename(file, path.extname(file)); // Имя файла
+            const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
+            const optimizedImagePath = path.join(optimizedDir, relativePath);
+
+            // Здесь мы игнорируем поиск оптимизированных картинок и добавляем только оригинальные файлы
+            customImageList.set(name, `assets/${relativePath}`);
+        }
+    });
+
+    return { customAtlasData, customImageList };
 };
 
 // Получаем все папки, начинающиеся с 'art-' в директории assets
@@ -69,42 +128,50 @@ let allKeys = new Set(); // Для хранения всех ключей
 
 // Обрабатываем каждую папку
 artFolders.forEach(folder => {
-    const { folderSuffix, imageList, atlasList } = processArtFolder(folder);
+    const { folderSuffix, imageList, atlasList, customImageFiles } = processArtFolder(folder);
 
-    // Добавляем данные в общие списки
-    atlasList.forEach((value, key) => {
-        allAtlasListEntries.push(`    ['${key}', '${value}']`);
-    });
-
-    imageListByScene.set(folderSuffix, imageList);
     atlasListByScene.set(folderSuffix, atlasList);
 
-    // Генерация ATLAS_BY_IMAGE_MAPPING для конкретного атласа
-    atlasList.forEach((atlasPath, atlasName) => {
-        const jsonFilePath = path.join(folder, `${atlasName}.json`);
-        const atlasData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+    // Обработка изображений из папок с префиксом '_'
+    const { customAtlasData, customImageList } = processCustomFolders(customImageFiles, folderSuffix);
 
-        if (atlasData.textures && atlasData.textures[0] && atlasData.textures[0].frames) {
-            const frames = atlasData.textures[0].frames;
-            frames.forEach(frame => {
-                const key = frame.filename;
-                if (allKeys.has(key)) {
-                    console.error('\x1b[31m%s\x1b[0m', `Duplicate key found: ${key}`);
-                } else {
-                    allKeys.add(key);
-                    allAtlasByImageMappingEntries.push(`    ['${key}', '${atlasName}']`);
-                }
-            });
+    // Если нашли атлас, исключаем добавление отдельных изображений из этой папки
+    if (customAtlasData.length > 0) {
+        // Если атлас есть, не добавляем отдельные изображения в IMAGE_LIST_BY_SCENE
+        customAtlasData.forEach(atlas => {
+            // Проверяем на дублирование перед добавлением в ATLAS_LIST_BY_SCENE
+            if (!atlasListByScene.get(folderSuffix)?.has(atlas.name)) {
+                allAtlasListEntries.push(`    ['${atlas.name}', '${atlas.path}']`);
+                atlasListByScene.set(folderSuffix, new Map([[atlas.name, atlas.path]]));
+            }
+        });
+    } else {
+        // Если атлас не найден, добавляем отдельные изображения
+        customImageList.forEach((value, key) => {
+            imageList.set(key, value);
+        });
+    }
+
+    // После обработки изображений добавляем обычные изображения в IMAGE_LIST_BY_SCENE
+    imageListByScene.set(folderSuffix, imageList);
+
+    atlasList.forEach((value, key) => {
+        // Проверяем на дублирование в ALL_ATLASES_LIST
+        if (!allAtlasListEntries.includes(`    ['${key}', '${value}']`)) {
+            allAtlasListEntries.push(`    ['${key}', '${value}']`);
         }
     });
+});
 
-    // Проверка на дубликаты в imageList
-    imageList.forEach((value, key) => {
-        if (allKeys.has(key)) {
-            console.error('\x1b[31m%s\x1b[0m', `Duplicate key found: ${key}`);
-        } else {
-            allKeys.add(key);
-        }
+// Генерация ATLAS_BY_IMAGE_MAPPING
+atlasListByScene.forEach((atlasList, scene) => {
+    atlasList.forEach((atlasPath, atlasName) => {
+        const atlasData = JSON.parse(fs.readFileSync(atlasPath, 'utf8'));
+        atlasData.textures[0].frames.forEach(frame => {
+            const key = frame.filename;
+            checkForDuplicateKeys(key, atlasPath);
+            allAtlasByImageMappingEntries.push(`    ['${key}', '${atlasName}']`);
+        });
     });
 });
 
@@ -125,19 +192,19 @@ export const ALL_ATLASES_LIST: Map<string, string> = new Map([
 ${allAtlasListEntries.join(',\n')}
 ]);
 
-export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([ 
+export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
 ${Array.from(imageListByScene.entries())
     .map(([key, map]) => `    ['${key}', new Map([\n${formatMap(map)}\n    ])]`)
     .join(',\n')}
 ]);
 
-export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([ 
+export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
 ${Array.from(atlasListByScene.entries())
     .map(([key, map]) => `    ['${key}', new Map([\n${formatMap(map)}\n    ])]`)
     .join(',\n')}
 ]);
 
-export const ATLAS_BY_IMAGE_MAPPING: Map<string, string> = new Map([ 
+export const ATLAS_BY_IMAGE_MAPPING: Map<string, string> = new Map([
 ${allAtlasByImageMappingEntries.join(',\n')}
 ]);
 `;
