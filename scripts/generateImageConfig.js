@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
-// Определяем пути к директориям
+// Define paths to directories
 const assetsDir = path.join(__dirname, '..', 'assets');
 const optimizedDir = path.join(assetsDir, '_art-optimized');
 
-// Функция для рекурсивного получения всех файлов из директории и её подпапок
+// Function to recursively get all files from a directory and its subdirectories
 const getAllFilesRecursively = (dir, files = []) => {
     const items = fs.readdirSync(dir);
     items.forEach(item => {
@@ -19,163 +20,281 @@ const getAllFilesRecursively = (dir, files = []) => {
     return files;
 };
 
-// Функция для обработки папки с артом, проверяя сначала _art-optimized
-const processArtFolder = (folder) => {
-    const folderSuffix = path.basename(folder).replace('art-', '').toLowerCase(); // Получаем название папки (например, 'main', 'loading')
-
-    const allFiles = getAllFilesRecursively(folder); // Получаем все файлы в папке
-
-    // Фильтруем изображения на две категории:
-    const imageFiles = allFiles.filter(file => (file.endsWith('.png') || file.endsWith('.jpg')) && !file.includes('_')); // Обычные изображения
-    const customImageFiles = allFiles.filter(file => file.includes('_') && (file.endsWith('.png') || file.endsWith('.jpg'))); // Изображения в папках с префиксом '_'
-    const jsonFiles = allFiles.filter(file => file.endsWith('.json')); // Атласы (JSON-файлы)
-
-    // Маппинг для изображений первой категории (обычные изображения)
-    const imageList = new Map();
-    imageFiles.forEach(file => {
-        const name = path.basename(file, path.extname(file));
-        const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
-        const optimizedImagePath = path.join(optimizedDir, relativePath);
-
-        // Check for duplicates
-        checkForDuplicateKeys(name, file);
-
-        if (fs.existsSync(optimizedImagePath)) {
-            imageList.set(name, `assets/${relativePath}`);
-        } else {
-            console.warn('\x1b[33m%s\x1b[0m', `Warning: Optimized image not found for ${file}, using original`);
-            imageList.set(name, `assets/${relativePath}`);
-        }
-    });
-
-
-    // Маппинг для атласов
-    const atlasList = new Map();
-    jsonFiles.forEach(file => {
-        const name = path.basename(file, '.json'); // Имя атласа
-        const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/'); // Путь к файлу
-        const optimizedAtlasPath = path.join(optimizedDir, relativePath); // Путь к оптимизированной версии атласа
-
-        // Если оптимизированный атлас существует — используем его
-        if (!atlasList.has(name)) { // Проверяем на дублирование
-            if (fs.existsSync(optimizedAtlasPath)) {
-                atlasList.set(name, `assets/${path.relative(assetsDir, optimizedAtlasPath).replace(/\\/g, '/')}`);
-            } else {
-                // Если атласа нет — используем оригинал и выводим предупреждение
-                console.warn('\x1b[33m%s\x1b[0m', `Warning: Optimized atlas not found for ${name}, using original from ${relativePath}`);
-                atlasList.set(name, `assets/${relativePath}`);
-            }
-        }
-    });
-
-    return {
-        folderSuffix,
-        imageList,
-        atlasList,
-        customImageFiles // Изображения из папок с префиксом '_', которые нужно обработать отдельно
-    };
+// Function to compute the hash of a file
+const computeFileHash = (filePath) => {
+    const fileBuffer = fs.readFileSync(filePath);
+    const hashSum = crypto.createHash('md5'); // You can use 'sha256' or another algorithm if preferred
+    hashSum.update(fileBuffer);
+    return hashSum.digest('hex');
 };
 
-// Проверка дубликатов
+// Function to read and parse hash.txt
+const readHashFile = (hashFilePath) => {
+    const hashData = new Map(); // Map<relativePath, hash>
+
+    const content = fs.readFileSync(hashFilePath, 'utf8');
+    const lines = content.split('\n').filter(line => line.trim() !== '');
+
+    lines.forEach(line => {
+        const [relativePath, hash] = line.trim().split(/\s+/);
+        if (relativePath && hash) {
+            hashData.set(relativePath.replace(/\\/g, '/'), hash);
+        }
+    });
+
+    return hashData;
+};
+
+// Read the hash.txt file
+const hashFilePath = path.join(optimizedDir, 'hash.txt');
+const hashData = readHashFile(hashFilePath);
+
+// Function to check for duplicate keys and issue warnings
+const allKeys = new Set(); // To store all image names and atlas file names
 const checkForDuplicateKeys = (key, fileName) => {
     if (allKeys.has(key)) {
-        console.error('\x1b[31m%s\x1b[0m', `Duplicate key found: ${key} from ${fileName}`);
+        console.warn(
+            '\x1b[31m%s\x1b[0m',
+            `Warning: Duplicate key found for image "${key}" in file "${fileName}"`
+        );
     } else {
         allKeys.add(key);
     }
 };
 
-// Обработка подпапок с префиксом '_' и их изображений
+// Function to process an art folder
+const processArtFolder = (folder) => {
+    const folderSuffix = path.basename(folder).replace('art-', '').toLowerCase(); // Get the folder name (e.g., 'main', 'loading')
+
+    const allFiles = getAllFilesRecursively(folder); // Get all files in the folder
+
+    // Filter images into two categories:
+    const imageFiles = allFiles.filter(
+        file => (file.endsWith('.png') || file.endsWith('.jpg')) && !file.includes('_')
+    ); // Regular images
+    const customImageFiles = allFiles.filter(
+        file => file.includes('_') && (file.endsWith('.png') || file.endsWith('.jpg'))
+    ); // Images in folders with prefix '_'
+    const jsonFiles = allFiles.filter(file => file.endsWith('.json')); // Atlases (JSON files)
+
+    // Initialize imageList as a Map
+    let imageList = new Map();
+
+    imageFiles.forEach(file => {
+        const name = path.basename(file, path.extname(file)); // File name without extension
+        const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
+        const optimizedImagePath = path.join(optimizedDir, relativePath);
+
+        // Get the hash from hash.txt
+        const hashEntry = hashData.get(`/${relativePath}`);
+
+        // Compute hash of the source file
+        const sourceHash = computeFileHash(file);
+
+        // Validate the hash
+        let useOptimized = false;
+        if (hashEntry && hashEntry === sourceHash) {
+            useOptimized = true;
+        } else {
+            console.warn(
+                '\x1b[33m%s\x1b[0m',
+                `Warning: Hash mismatch for ${file}, using original`
+            );
+        }
+
+        // Compute hash of the optimized or original file
+        let fileToUse;
+        if (useOptimized && fs.existsSync(optimizedImagePath)) {
+            fileToUse = optimizedImagePath;
+        } else {
+            fileToUse = file;
+        }
+        const optimizedHash = computeFileHash(fileToUse);
+
+        // Append hash to path
+        const filePathWithHash = `assets/${relativePath}?${optimizedHash}`;
+
+        // Check for duplicates
+        checkForDuplicateKeys(name, file);
+
+        imageList.set(name, filePathWithHash);
+    });
+
+    return {
+        folderSuffix,
+        imageList,          // Regular images
+        customImageFiles,   // Images from subfolders with '_'
+        jsonFiles           // Atlases
+    };
+};
+
+// Corrected processCustomFolders function
 const processCustomFolders = (customImageFiles, folderSuffix) => {
     const customAtlasData = [];
     const customImageList = new Map();
 
+    // Group images by their subfolder
+    const imagesBySubFolder = new Map();
+
     customImageFiles.forEach(file => {
-        const subFolderPath = path.dirname(file); // Папка, где лежит файл
-        const jsonFileName = `${path.basename(subFolderPath)}.json`; // Имя JSON файла для атласа
-        const optimizedJsonFilePath = path.join(optimizedDir, path.relative(assetsDir, path.dirname(subFolderPath)), jsonFileName);
+        const subFolderPath = path.dirname(file);
+        if (!imagesBySubFolder.has(subFolderPath)) {
+            imagesBySubFolder.set(subFolderPath, []);
+        }
+        imagesBySubFolder.get(subFolderPath).push(file);
+    });
 
-        // Проверяем наличие оптимизированного атласа
-        if (fs.existsSync(optimizedJsonFilePath)) {
-            customAtlasData.push({ name: jsonFileName.replace('.json', ''), path: `assets/${path.relative(assetsDir, optimizedJsonFilePath).replace(/\\/g, '/')}` });
+    imagesBySubFolder.forEach((files, subFolderPath) => {
+        const jsonFileName = `${path.basename(subFolderPath)}.json`; // JSON file name for the atlas
+
+        // Corrected path calculation
+        const optimizedJsonFilePath = path.join(
+            optimizedDir,
+            path.relative(assetsDir, path.dirname(subFolderPath)),
+            jsonFileName
+        );
+
+        let useOptimizedAtlas = true;
+
+        // Validate each source image
+        for (const file of files) {
+            const relativePath = `/${path.relative(assetsDir, file).replace(/\\/g, '/')}`;
+            const hashEntry = hashData.get(relativePath);
+
+            // Compute hash of the source file
+            const sourceHash = computeFileHash(file);
+
+            if (!hashEntry || hashEntry !== sourceHash) {
+                console.warn(
+                    '\x1b[33m%s\x1b[0m',
+                    `Warning: Hash mismatch for ${file}, using individual images`
+                );
+                useOptimizedAtlas = false;
+                break; // No need to check further if one image doesn't match
+            }
+        }
+
+        if (useOptimizedAtlas && fs.existsSync(optimizedJsonFilePath)) {
+            // Compute hash of the optimized atlas JSON file
+            const optimizedHash = computeFileHash(optimizedJsonFilePath);
+
+            const atlasName = jsonFileName.replace('.json', '');
+
+            // Check for duplicates
+            checkForDuplicateKeys(atlasName, optimizedJsonFilePath);
+
+            customAtlasData.push({
+                name: atlasName,
+                path: `assets/${path.relative(assetsDir, optimizedJsonFilePath).replace(/\\/g, '/')}?${optimizedHash}`
+            });
         } else {
-            console.warn('\x1b[33m%s\x1b[0m', `Warning: Custom atlas ${jsonFileName} not found at path: ${optimizedJsonFilePath}. Adding individual images.`);
+            // Add individual images
+            files.forEach(file => {
+                const name = path.basename(file, path.extname(file));
+                const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
+                const optimizedImagePath = path.join(optimizedDir, relativePath);
 
-            // Если атлас не найден, добавляем изображения отдельно
-            const name = path.basename(file, path.extname(file)); // Имя файла
-            const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
-            const optimizedImagePath = path.join(optimizedDir, relativePath);
+                // Get the hash from hash.txt
+                const hashEntry = hashData.get(`/${relativePath}`);
 
-            // Здесь мы игнорируем поиск оптимизированных картинок и добавляем только оригинальные файлы
-            customImageList.set(name, `assets/${relativePath}`);
+                // Compute hash of the source file
+                const sourceHash = computeFileHash(file);
+
+                // Validate the hash
+                let useOptimized = false;
+                if (hashEntry && hashEntry === sourceHash) {
+                    useOptimized = true;
+                } else {
+                    console.warn(
+                        '\x1b[33m%s\x1b[0m',
+                        `Warning: Hash mismatch for ${file}, using original`
+                    );
+                }
+
+                // Compute hash of the optimized or original file
+                let fileToUse;
+                if (useOptimized && fs.existsSync(optimizedImagePath)) {
+                    fileToUse = optimizedImagePath;
+                } else {
+                    fileToUse = file;
+                }
+                const optimizedHash = computeFileHash(fileToUse);
+
+                // Append hash to path
+                const filePathWithHash = `assets/${relativePath}?${optimizedHash}`;
+
+                // Check for duplicates
+                checkForDuplicateKeys(name, file);
+
+                customImageList.set(name, filePathWithHash);
+            });
         }
     });
 
     return { customAtlasData, customImageList };
 };
 
-// Получаем все папки, начинающиеся с 'art-' в директории assets
+// Get all folders starting with 'art-' in the assets directory
 const artFolders = fs.readdirSync(assetsDir)
     .filter(folder => folder.startsWith('art-'))
     .map(folder => path.join(assetsDir, folder));
 
-// Генерация всех мапов
+// Generate all maps
 let allAtlasListEntries = [];
 let imageListByScene = new Map();
 let atlasListByScene = new Map();
 let allAtlasByImageMappingEntries = [];
-let allKeys = new Set(); // Для хранения всех ключей
 
-// Обрабатываем каждую папку
+// Process each folder
 artFolders.forEach(folder => {
-    const { folderSuffix, imageList, atlasList, customImageFiles } = processArtFolder(folder);
+    const { folderSuffix, imageList, customImageFiles } = processArtFolder(folder);
 
-    atlasListByScene.set(folderSuffix, atlasList);
-
-    // Обработка изображений из папок с префиксом '_'
+    // Process images from folders with prefix '_'
     const { customAtlasData, customImageList } = processCustomFolders(customImageFiles, folderSuffix);
 
-    // Если нашли атлас, исключаем добавление отдельных изображений из этой папки
+    // Initialize atlasList for the scene
+    let atlasList = new Map();
+
+    // If an atlas is found, exclude adding individual images from this folder
     if (customAtlasData.length > 0) {
-        // Если атлас есть, не добавляем отдельные изображения в IMAGE_LIST_BY_SCENE
+        // If an atlas exists, do not add individual images to IMAGE_LIST_BY_SCENE
         customAtlasData.forEach(atlas => {
-            // Проверяем на дублирование перед добавлением в ATLAS_LIST_BY_SCENE
-            if (!atlasListByScene.get(folderSuffix)?.has(atlas.name)) {
+            // Check for duplicates before adding to ATLAS_LIST_BY_SCENE
+            if (!atlasList.has(atlas.name)) {
                 allAtlasListEntries.push(`    ['${atlas.name}', '${atlas.path}']`);
-                atlasListByScene.set(folderSuffix, new Map([[atlas.name, atlas.path]]));
+                atlasList.set(atlas.name, atlas.path);
             }
         });
     } else {
-        // Если атлас не найден, добавляем отдельные изображения
+        // If no atlas is found, add individual images
         customImageList.forEach((value, key) => {
             imageList.set(key, value);
         });
     }
 
-    // После обработки изображений добавляем обычные изображения в IMAGE_LIST_BY_SCENE
+    // After processing images, add regular images to IMAGE_LIST_BY_SCENE
     imageListByScene.set(folderSuffix, imageList);
 
-    atlasList.forEach((value, key) => {
-        // Проверяем на дублирование в ALL_ATLASES_LIST
-        if (!allAtlasListEntries.includes(`    ['${key}', '${value}']`)) {
-            allAtlasListEntries.push(`    ['${key}', '${value}']`);
-        }
-    });
+    // Add atlasList to ATLAS_LIST_BY_SCENE
+    atlasListByScene.set(folderSuffix, atlasList);
 });
 
-// Генерация ATLAS_BY_IMAGE_MAPPING
+// Generate ATLAS_BY_IMAGE_MAPPING and check for duplicates
 atlasListByScene.forEach((atlasList, scene) => {
     atlasList.forEach((atlasPath, atlasName) => {
-        const atlasData = JSON.parse(fs.readFileSync(atlasPath, 'utf8'));
+        // Read the atlas JSON file
+        const atlasFullPath = path.join(assetsDir, atlasPath.split('?')[0].replace('assets/', ''));
+        const atlasData = JSON.parse(fs.readFileSync(atlasFullPath, 'utf8'));
+
         atlasData.textures[0].frames.forEach(frame => {
             const key = frame.filename;
-            checkForDuplicateKeys(key, atlasPath);
+            checkForDuplicateKeys(key, atlasFullPath);  // Check for duplicates
             allAtlasByImageMappingEntries.push(`    ['${key}', '${atlasName}']`);
         });
     });
 });
 
-// Функция для форматирования Map с отступами
+// Function to format Map with indentation
 const formatMap = (map) => {
     if (map.size === 0) {
         return '    // No entries';
@@ -185,7 +304,7 @@ const formatMap = (map) => {
         .join(',\n');
 };
 
-// Формирование контента итогового файла
+// Form the content of the final file
 const fileContent = `// auto-generated
 
 export const ALL_ATLASES_LIST: Map<string, string> = new Map([
@@ -209,7 +328,7 @@ ${allAtlasByImageMappingEntries.join(',\n')}
 ]);
 `;
 
-// Запись файла
+// Write the file
 const outputFilePath = path.join(__dirname, '..', 'src', 'config', 'ImageConfig.ts');
 fs.writeFileSync(outputFilePath, fileContent, 'utf8');
 
