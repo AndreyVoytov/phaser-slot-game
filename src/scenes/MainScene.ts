@@ -53,7 +53,7 @@ export default class MainScene extends Phaser.Scene {
         this.spinButton.on('pointerup', () => {
             if(!this.isSpinning){
                 this.isSpinning = true;
-                SpriteUtils.setTexture(this.spinButton, 'spin-button-pressed');
+                SpriteUtils.setTexture(this, this.spinButton, 'spin-button-pressed');
                 this.sound.play('click', {volume: 0.4});
 
                 // Start reels animations
@@ -75,7 +75,7 @@ export default class MainScene extends Phaser.Scene {
         soundButton.setScale(0.7);
         soundButton.on('pointerup', () => {
             let soundOn = this.audioManager.switchSoundEnabled();
-            SpriteUtils.setTexture(soundButton,  soundOn? 'sound-on' : 'sound-off');
+            SpriteUtils.setTexture(this, soundButton,  soundOn? 'sound-on' : 'sound-off');
         });
 
         // Run audio on first touch
@@ -121,7 +121,7 @@ export default class MainScene extends Phaser.Scene {
                     // Delay to enjoy win
                     this.time.delayedCall(700, () => {
                         this.isSpinning = false;
-                        SpriteUtils.setTexture(this.spinButton, 'spin-button');
+                        SpriteUtils.setTexture(this, this.spinButton, 'spin-button');
                     });
 
                 // Process loose
@@ -133,7 +133,7 @@ export default class MainScene extends Phaser.Scene {
                     this.goblin.updateAnimation();
 
                     this.isSpinning = false;
-                    SpriteUtils.setTexture(this.spinButton, 'spin-button');
+                    SpriteUtils.setTexture(this, this.spinButton, 'spin-button');
                 }
             });
         })
