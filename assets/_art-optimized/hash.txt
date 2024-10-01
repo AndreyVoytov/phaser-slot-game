@@ -10,5 +10,5 @@
 /art-main/_main-atlas/symbol-3.png add14e3c193ac8e5906f0236e0a4ef4a
 /art-main/_main-atlas/spin-button-pressed.png 104fa20e808763d26421bb570a401621
 
-/art-main/background.png g4t34353t43
-/art-main/symbol-2.png 123124a13ad23r
+/art-main/background.png 5692611087a9c7dd75a8df842a77830e
+/art-main/symbol-2.png f799e40d4b26d46c509fab10fbb7a284

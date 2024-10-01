@@ -16,6 +16,14 @@ export default class SpriteUtils{
         return new Phaser.GameObjects.Sprite(scene, x, y, key);
     }
 
+    public static setTexture(image: Phaser.GameObjects.Image, key: string) : void{
+        if(ATLAS_BY_IMAGE_MAPPING.has(key)) {
+            image.setTexture(ATLAS_BY_IMAGE_MAPPING.get(key)!, key);
+            return;
+        }
+        image.setTexture(key);
+    }
+
     public static loadArtForScene(scene: Phaser.Scene, sceneKey: string) : void {
         
         let imagesMap = IMAGE_LIST_BY_SCENE.get(sceneKey)!;
@@ -26,7 +34,7 @@ export default class SpriteUtils{
 
         let atlasesMap = ATLAS_LIST_BY_SCENE.get(sceneKey)!;
         for(let key of atlasesMap.keys()){
-            scene.load.atlas(key, atlasesMap.get(key) + '.png', atlasesMap.get(key) + '.json');
+            scene.load.atlas(key, atlasesMap.get(key)?.replace('json', 'png'), atlasesMap.get(key));
         }
     }
 

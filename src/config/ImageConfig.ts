@@ -27,10 +27,10 @@ export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
 export const ATLAS_BY_IMAGE_MAPPING: Map<string, string> = new Map([
     ['progress-bg', '_loading-atlas'],
     ['progress', '_loading-atlas'],
+    ['symbol-3', '_main-atlas'],
     ['reel-frame', '_main-atlas'],
     ['spin-button', '_main-atlas'],
     ['spin-button-pressed', '_main-atlas'],
-    ['symbol-3', '_main-atlas'],
     ['symbol-2', '_main-atlas'],
     ['symbol-1', '_main-atlas'],
     ['sound-off', '_main-atlas'],

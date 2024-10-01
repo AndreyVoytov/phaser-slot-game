@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import SymbolUtils from '../utils/SymbolUtils';
 import { SymbolType } from '../enums/SymbolType';
 import { gsap } from 'gsap';
+import SpriteUtils from '../utils/SpriteUtils';
 
 export default class Reel {
     private scene: Phaser.Scene;
@@ -28,7 +29,7 @@ export default class Reel {
         
         for (let i = 0; i < this.pattern.length * reelSymbolsCount; i++) {
             const symbol = this.pattern[i % this.pattern.length];
-            const symbolSprite = this.scene.add.sprite(0, i * this.symbolHeight, 'main-atlas', SymbolUtils.getImageBySymbol(symbol));
+            const symbolSprite = SpriteUtils.addImage(scene, 0, i * this.symbolHeight, SymbolUtils.getImageBySymbol(symbol));
             this.container.add(symbolSprite);
         }
         this.applyMask();
