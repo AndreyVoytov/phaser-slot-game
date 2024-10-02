@@ -69,7 +69,7 @@ export default class PreloadScene extends Phaser.Scene {
     /*** Loading assets ***/
 
     // art
-    // SpriteUtils.loadArtForScene(this, 'main');
+    SpriteUtils.loadArtForScene(this, 'main');
 
     // sound
     this.load.audio('main-theme', 'assets/audio/main-theme.mp3');

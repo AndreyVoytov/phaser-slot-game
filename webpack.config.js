@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const spritePlugins = require('./scripts/generateSpritePlugins');
 
 module.exports = {
   entry: './src/main.ts',
@@ -33,7 +34,7 @@ module.exports = {
       patterns: [
         { from: 'index.html', to: '' },
         { from: 'assets', to: 'assets', 
-          // globOptions: {
+          // globOptions: {  //TODO ignore '**/art-*/**' ?
           //   ignore: [
           //     '**/_*/**',
           //   ],
@@ -41,6 +42,7 @@ module.exports = {
         },
       ],
     }),
+    ...spritePlugins
   ],
   output: {
     filename: 'bundle.js',
