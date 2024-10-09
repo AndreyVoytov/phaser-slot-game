@@ -86,6 +86,7 @@ const processArtFolder = (folder) => {
         const name = path.basename(file, path.extname(file)); // File name without extension
         const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
         const optimizedImagePath = path.join(optimizedDir, relativePath);
+        const optimizedImageRelativePath = path.relative(assetsDir, optimizedImagePath).replace(/\\/g, '/');
 
         // Get the hash from hash.txt
         const hashEntry = hashData.get(`/${relativePath}`);
@@ -97,25 +98,25 @@ const processArtFolder = (folder) => {
         let useOptimized = false;
         if (hashEntry && hashEntry === sourceHash) {
             useOptimized = true;
-        } else
-         if (hashData.length > 0)
-        {  
-            consoleWarning(
-                `Warning: Image hash mismatch for **${file.split('assets')[1]}**, using original image`
-            );
-        }
+        }          
 
         // Compute hash of the optimized or original file
-        let fileToUse;
-        if (useOptimized && fs.existsSync(optimizedImagePath)) {
-            fileToUse = optimizedImagePath;
+        let pathToUse;
+        let fileExist = fs.existsSync(optimizedImagePath);
+        if (useOptimized && fileExist) {
+            pathToUse = optimizedImageRelativePath;
         } else {
-            fileToUse = file;
+            if (hashData.size > 0) {  
+                consoleWarning(
+                    `Warning: Image hash mismatch for **${file.split('assets')[1]}**` + (!fileExist? ' (file not present)': '')+ `, using original image`
+                );
+            }
+            pathToUse = relativePath;
         }
-        const optimizedHash = computeFileHash(fileToUse);
+        const hash = computeFileHash(file);
 
         // Append hash to path
-        const filePathWithHash = `assets/${relativePath}?${optimizedHash}`;
+        const filePathWithHash = `assets/${pathToUse}?${hash}`;
 
         // Check for duplicates
         checkForDuplicateKeys(name, file);
@@ -168,7 +169,7 @@ const processCustomFolders = (customImageFiles, folderSuffix) => {
             const sourceHash = computeFileHash(file);
 
             if (!hashEntry || hashEntry !== sourceHash) {
-                if(hashData.length > 0){
+                if(hashData.size > 0){
                     consoleWarning(
                         `Warning: Atlas hash mismatch for file **${file.split('assets')[1]}**, using individual images`
                     );
@@ -209,7 +210,7 @@ const processCustomFolders = (customImageFiles, folderSuffix) => {
                 if (hashEntry && hashEntry === sourceHash) {
                     useOptimized = true;
                 } else 
-                    if (hashData.length > 0)
+                    if (hashData.size > 0)
                     {
                     consoleLog(
                         `Used individual image ${file.split('assets')[1]}`
