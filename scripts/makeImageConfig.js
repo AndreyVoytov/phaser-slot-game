@@ -281,12 +281,14 @@ artFolders.forEach(folder => {
 
 // Generate ATLAS_BY_IMAGE_MAPPING and check for duplicates
 atlasListByScene.forEach((atlasList, scene) => {
+
     atlasList.forEach((atlasPath, atlasName) => {
         // Read the atlas JSON file
         const atlasFullPath = path.join(assetsDir, atlasPath.split('?')[0].replace('assets/', ''));
         const atlasData = JSON.parse(fs.readFileSync(atlasFullPath, 'utf8'));
 
         if(atlasData.textures){
+            console.log(atlasData.textures[0].frames)
             atlasData.textures[0].frames.forEach(frame => {
                 const key = frame.filename;
                 checkForDuplicateKeys(key, atlasFullPath);  // Check for duplicates

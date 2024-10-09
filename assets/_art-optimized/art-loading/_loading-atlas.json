@@ -1,46 +1,52 @@
 {
-  "frames": {
-    "progress-bg": {
-      "frame": {
-        "x": 0,
-        "y": 0,
-        "w": 400,
-        "h": 87
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 400,
-        "h": 87
-      },
-      "sourceSize": {
-        "w": 400,
-        "h": 87
-      }
-    },
-    "progress": {
-      "frame": {
-        "x": 0,
-        "y": 87,
-        "w": 400,
-        "h": 87
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 400,
-        "h": 87
-      },
-      "sourceSize": {
-        "w": 400,
-        "h": 87
-      }
-    }
-  },
+  "textures": [{
+    "frames": [
+        {
+          "filename": "progress-bg",
+          "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 400,
+            "h": 87
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 400,
+            "h": 87
+          },
+          "sourceSize": {
+            "w": 400,
+            "h": 87
+          }
+        }
+      ,
+        {
+          "filename": "progress",
+          "frame": {
+            "x": 0,
+            "y": 87,
+            "w": 400,
+            "h": 87
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 400,
+            "h": 87
+          },
+          "sourceSize": {
+            "w": 400,
+            "h": 87
+          }
+        }
+      
+    ]
+  }],
   "meta": {
     "app": "spritesheet-templates",
     "version": "1.0.0",

@@ -1,6 +1,5 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const atlasPlugins = require('./scripts/makeAtlases');
 
 module.exports = {
   entry: './src/main.ts',
@@ -41,8 +40,7 @@ module.exports = {
           // },
         },
       ],
-    }),
-    ...atlasPlugins
+    })
   ],
   output: {
     filename: 'bundle.js',

@@ -1,166 +1,184 @@
 {
-  "frames": {
-    "reel-frame": {
-      "frame": {
-        "x": 0,
-        "y": 0,
-        "w": 650,
-        "h": 500
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 650,
-        "h": 500
-      },
-      "sourceSize": {
-        "w": 650,
-        "h": 500
-      }
-    },
-    "sound-off": {
-      "frame": {
-        "x": 120,
-        "y": 500,
-        "w": 120,
-        "h": 113
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 120,
-        "h": 113
-      },
-      "sourceSize": {
-        "w": 120,
-        "h": 113
-      }
-    },
-    "sound-on": {
-      "frame": {
-        "x": 240,
-        "y": 500,
-        "w": 120,
-        "h": 113
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 120,
-        "h": 113
-      },
-      "sourceSize": {
-        "w": 120,
-        "h": 113
-      }
-    },
-    "spin-button-pressed": {
-      "frame": {
-        "x": 650,
-        "y": 0,
-        "w": 280,
-        "h": 155
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 280,
-        "h": 155
-      },
-      "sourceSize": {
-        "w": 280,
-        "h": 155
-      }
-    },
-    "spin-button": {
-      "frame": {
-        "x": 650,
-        "y": 155,
-        "w": 280,
-        "h": 155
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 280,
-        "h": 155
-      },
-      "sourceSize": {
-        "w": 280,
-        "h": 155
-      }
-    },
-    "symbol-1": {
-      "frame": {
-        "x": 770,
-        "y": 310,
-        "w": 120,
-        "h": 127
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 120,
-        "h": 127
-      },
-      "sourceSize": {
-        "w": 120,
-        "h": 127
-      }
-    },
-    "symbol-2": {
-      "frame": {
-        "x": 0,
-        "y": 500,
-        "w": 120,
-        "h": 127
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 120,
-        "h": 127
-      },
-      "sourceSize": {
-        "w": 120,
-        "h": 127
-      }
-    },
-    "symbol-3": {
-      "frame": {
-        "x": 650,
-        "y": 310,
-        "w": 120,
-        "h": 170
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 120,
-        "h": 170
-      },
-      "sourceSize": {
-        "w": 120,
-        "h": 170
-      }
-    }
-  },
+  "textures": [{
+    "frames": [
+        {
+          "filename": "reel-frame",
+          "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 650,
+            "h": 500
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 650,
+            "h": 500
+          },
+          "sourceSize": {
+            "w": 650,
+            "h": 500
+          }
+        }
+      ,
+        {
+          "filename": "sound-off",
+          "frame": {
+            "x": 120,
+            "y": 500,
+            "w": 120,
+            "h": 113
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 120,
+            "h": 113
+          },
+          "sourceSize": {
+            "w": 120,
+            "h": 113
+          }
+        }
+      ,
+        {
+          "filename": "sound-on",
+          "frame": {
+            "x": 240,
+            "y": 500,
+            "w": 120,
+            "h": 113
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 120,
+            "h": 113
+          },
+          "sourceSize": {
+            "w": 120,
+            "h": 113
+          }
+        }
+      ,
+        {
+          "filename": "spin-button-pressed",
+          "frame": {
+            "x": 650,
+            "y": 0,
+            "w": 280,
+            "h": 155
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 280,
+            "h": 155
+          },
+          "sourceSize": {
+            "w": 280,
+            "h": 155
+          }
+        }
+      ,
+        {
+          "filename": "spin-button",
+          "frame": {
+            "x": 650,
+            "y": 155,
+            "w": 280,
+            "h": 155
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 280,
+            "h": 155
+          },
+          "sourceSize": {
+            "w": 280,
+            "h": 155
+          }
+        }
+      ,
+        {
+          "filename": "symbol-1",
+          "frame": {
+            "x": 770,
+            "y": 310,
+            "w": 120,
+            "h": 127
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 120,
+            "h": 127
+          },
+          "sourceSize": {
+            "w": 120,
+            "h": 127
+          }
+        }
+      ,
+        {
+          "filename": "symbol-2",
+          "frame": {
+            "x": 0,
+            "y": 500,
+            "w": 120,
+            "h": 127
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 120,
+            "h": 127
+          },
+          "sourceSize": {
+            "w": 120,
+            "h": 127
+          }
+        }
+      ,
+        {
+          "filename": "symbol-3",
+          "frame": {
+            "x": 650,
+            "y": 310,
+            "w": 120,
+            "h": 170
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 120,
+            "h": 170
+          },
+          "sourceSize": {
+            "w": 120,
+            "h": 170
+          }
+        }
+      
+    ]
+  }],
   "meta": {
     "app": "spritesheet-templates",
     "version": "1.0.0",

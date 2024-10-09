@@ -12,6 +12,9 @@ const __dirname = path.dirname(__filename);
 const assetsDir = path.resolve(__dirname, '../assets');
 const outputFiles = [];
 
+//TODO !!!! пока это просто копия
+
+
 // Atlas generation function
 async function generateAtlases() {
   const artDirs = findDirectories(assetsDir, 'art-');

@@ -1,8 +1,8 @@
 // auto-generated
 
 export const ALL_ATLASES_LIST: Map<string, string> = new Map([
-    ['_loading-atlas', 'assets/_art-optimized/art-loading/_loading-atlas.json?981a6ca99b9e71bb460bf86d9a12f526'],
-    ['_main-atlas', 'assets/_art-optimized/art-main/_main-atlas.json?248133a708b365622b586c5fa3f3462f']
+    ['_loading-atlas', 'assets/_art-optimized/art-loading/_loading-atlas.json?f23db91b0025c298f415376c6a1e11f9'],
+    ['_main-atlas', 'assets/_art-optimized/art-main/_main-atlas.json?8d971fe95fea47d9e9981840ee6e7462']
 ]);
 
 export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
@@ -20,13 +20,22 @@ export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
 
 export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
     ['loading', new Map([
-        ['_loading-atlas', 'assets/_art-optimized/art-loading/_loading-atlas.json?981a6ca99b9e71bb460bf86d9a12f526']
+        ['_loading-atlas', 'assets/_art-optimized/art-loading/_loading-atlas.json?f23db91b0025c298f415376c6a1e11f9']
     ])],
     ['main', new Map([
-        ['_main-atlas', 'assets/_art-optimized/art-main/_main-atlas.json?248133a708b365622b586c5fa3f3462f']
+        ['_main-atlas', 'assets/_art-optimized/art-main/_main-atlas.json?8d971fe95fea47d9e9981840ee6e7462']
     ])]
 ]);
 
 export const ATLAS_BY_IMAGE_MAPPING: Map<string, string> = new Map([
-
+    ['progress-bg', '_loading-atlas'],
+    ['progress', '_loading-atlas'],
+    ['reel-frame', '_main-atlas'],
+    ['sound-off', '_main-atlas'],
+    ['sound-on', '_main-atlas'],
+    ['spin-button-pressed', '_main-atlas'],
+    ['spin-button', '_main-atlas'],
+    ['symbol-1', '_main-atlas'],
+    ['symbol-2', '_main-atlas'],
+    ['symbol-3', '_main-atlas']
 ]);

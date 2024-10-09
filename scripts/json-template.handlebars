@@ -1,28 +1,32 @@
 {
-  "frames": {
-    {{#each sprites}}
-    "{{{trimExtension name}}}": {
-      "frame": {
-        "x": {{x}},
-        "y": {{y}},
-        "w": {{width}},
-        "h": {{height}}
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": {{width}},
-        "h": {{height}}
-      },
-      "sourceSize": {
-        "w": {{width}},
-        "h": {{height}}
-      }
-    }{{#unless @last}},{{/unless}}
-    {{/each}}
-  },
+  "textures": [{
+    "frames": [
+      {{#each sprites}}
+        {
+          "filename": "{{{trimExtension name}}}",
+          "frame": {
+            "x": {{x}},
+            "y": {{y}},
+            "w": {{width}},
+            "h": {{height}}
+          },
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": {{width}},
+            "h": {{height}}
+          },
+          "sourceSize": {
+            "w": {{width}},
+            "h": {{height}}
+          }
+        }
+      {{#unless @last}},{{/unless}}
+      {{/each}}
+    ]
+  }],
   "meta": {
     "app": "spritesheet-templates",
     "version": "1.0.0",
