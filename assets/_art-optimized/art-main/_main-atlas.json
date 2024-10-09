@@ -164,7 +164,7 @@
   "meta": {
     "app": "spritesheet-templates",
     "version": "1.0.0",
-    "image": "_main-atlas.png",
+    "image": "",
     "format": "RGBA8888",
     "size": {
       "w": 930,

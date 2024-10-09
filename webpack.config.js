@@ -1,6 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const spritePlugins = require('./scripts/generateSpritePlugins');
+const atlasPlugins = require('./scripts/makeAtlases');
 
 module.exports = {
   entry: './src/main.ts',
@@ -42,7 +42,7 @@ module.exports = {
         },
       ],
     }),
-    ...spritePlugins
+    ...atlasPlugins
   ],
   output: {
     filename: 'bundle.js',
