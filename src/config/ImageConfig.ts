@@ -7,7 +7,10 @@ export const ALL_ATLASES_LIST: Map<string, string> = new Map([
 
 export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
     ['loading', new Map([
-        ['cloud', 'assets/art-loading/cloud.png?755c722fa07cee346821c3404da3bf2d']
+        ['cloud', 'assets/art-loading/cloud.png?755c722fa07cee346821c3404da3bf2d'],
+        ['cloud2', 'assets/art-loading/test/cloud2.png?755c722fa07cee346821c3404da3bf2d'],
+        ['cloud4', 'assets/art-loading/test/test3/cloud4.png?755c722fa07cee346821c3404da3bf2d'],
+        ['cloud3', 'assets/art-loading/test/_test2/cloud3.png?755c722fa07cee346821c3404da3bf2d']
     ])],
     ['main', new Map([
         ['background', 'assets/_art-optimized/art-main/background.png?5692611087a9c7dd75a8df842a77830e'],

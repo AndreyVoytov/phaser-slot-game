@@ -1,25 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { consoleError, consoleWarning, consoleSuccess, consoleLog } = require('./utils');
+const { consoleError, consoleWarning, consoleSuccess, consoleLog, getAllFilesRecursively } = require('./utils');
 
 // Define paths to directories
 const assetsDir = path.join(__dirname, '..', 'assets');
 const optimizedDir = path.join(assetsDir, '_art-optimized');
-
-// Function to recursively get all files from a directory and its subdirectories
-const getAllFilesRecursively = (dir, files = []) => {
-    const items = fs.readdirSync(dir);
-    items.forEach(item => {
-        const fullPath = path.join(dir, item);
-        if (fs.statSync(fullPath).isDirectory()) {
-            getAllFilesRecursively(fullPath, files);
-        } else {
-            files.push(fullPath);
-        }
-    });
-    return files;
-};
 
 // Function to compute the hash of a file
 const computeFileHash = (filePath) => {
@@ -133,7 +119,8 @@ const processArtFolder = (folder) => {
 };
 
 // Corrected processCustomFolders function
-const processCustomFolders = (customImageFiles, folderSuffix) => {
+const processCustomFolders = (customImageFiles) => {
+
     const customAtlasData = [];
     const customImageList = new Map();
 
@@ -193,11 +180,11 @@ const processCustomFolders = (customImageFiles, folderSuffix) => {
                 path: `assets/${path.relative(assetsDir, optimizedJsonFilePath).replace(/\\/g, '/')}?${optimizedHash}`
             });
         } else {
+            let useOptimized = true;
             // Add individual images
             files.forEach(file => {
                 const name = path.basename(file, path.extname(file));
                 const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
-                const optimizedImagePath = path.join(optimizedDir, relativePath);
 
                 // Get the hash from hash.txt
                 const hashEntry = hashData.get(`/${relativePath}`);
@@ -206,28 +193,35 @@ const processCustomFolders = (customImageFiles, folderSuffix) => {
                 const sourceHash = computeFileHash(file);
 
                 // Validate the hash
-                let useOptimized = false;
                 if (hashEntry && hashEntry === sourceHash) {
-                    useOptimized = true;
-                } else 
-                    if (hashData.size > 0)
-                    {
-                    consoleLog(
-                        `Used individual image ${file.split('assets')[1]}`
-                    );
+                    //do nothing
+                } else {
+                    useOptimized = false;
                 }
+            });
+
+            files.forEach(file => {
+                const name = path.basename(file, path.extname(file));
+                const relativePath = path.relative(assetsDir, file).replace(/\\/g, '/');
+                const optimizedImagePath = path.join(optimizedDir, relativePath);
 
                 // Compute hash of the optimized or original file
-                let fileToUse;
+                let pathToUse;
                 if (useOptimized && fs.existsSync(optimizedImagePath)) {
-                    fileToUse = optimizedImagePath;
+                    pathToUse = optimizedImagePath;
                 } else {
-                    fileToUse = file;
+                    if (hashData.size > 0) {
+                        consoleLog(
+                            `Used individual image ${file.split('assets')[1]}`
+                        );
+                    }
+
+                    pathToUse = relativePath;
                 }
-                const optimizedHash = computeFileHash(fileToUse);
+                const optimizedHash = computeFileHash(file);
 
                 // Append hash to path
-                const filePathWithHash = `assets/${relativePath}?${optimizedHash}`;
+                const filePathWithHash = `assets/${pathToUse}?${optimizedHash}`;
 
                 // Check for duplicates
                 checkForDuplicateKeys(name, file);
@@ -256,7 +250,7 @@ artFolders.forEach(folder => {
     const { folderSuffix, imageList, customImageFiles } = processArtFolder(folder);
 
     // Process images from folders with prefix '_'
-    const { customAtlasData, customImageList } = processCustomFolders(customImageFiles, folderSuffix);
+    const { customAtlasData, customImageList } = processCustomFolders(customImageFiles);
 
     // Initialize atlasList for the scene
     let atlasList = new Map();
@@ -271,12 +265,12 @@ artFolders.forEach(folder => {
                 atlasList.set(atlas.name, atlas.path);
             }
         });
-    } else {
-        // If no atlas is found, add individual images
-        customImageList.forEach((value, key) => {
-            imageList.set(key, value);
-        });
-    }
+    } 
+
+    // Add individual images
+    customImageList.forEach((value, key) => {
+        imageList.set(key, value);
+    });
 
     // After processing images, add regular images to IMAGE_LIST_BY_SCENE
     imageListByScene.set(folderSuffix, imageList);

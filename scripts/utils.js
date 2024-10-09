@@ -14,6 +14,20 @@ function findDirectories(baseDir, prefix) {
   return artDirs;
 }
 
+// Function to recursively get all files from a directory and its subdirectories
+function getAllFilesRecursively(dir, files = []) {
+  const items = fs.readdirSync(dir);
+  items.forEach(item => {
+      const fullPath = path.join(dir, item);
+      if (fs.statSync(fullPath).isDirectory()) {
+          getAllFilesRecursively(fullPath, files);
+      } else {
+          files.push(fullPath);
+      }
+  });
+  return files;
+};
+
 function consoleError(text) {
   const formattedText = formatReverse(getConsolePrefix() + text);
   console.warn(
@@ -129,5 +143,5 @@ function createAtlas(inputFolderPath, outputFilePath) {
   });
 }
 
-module.exports = { findDirectories, createAtlas, consoleError, consoleWarning, consoleSuccess, consoleLog };
+module.exports = { findDirectories, createAtlas, consoleError, consoleWarning, consoleSuccess, consoleLog, getAllFilesRecursively };
 
