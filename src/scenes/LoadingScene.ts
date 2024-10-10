@@ -23,7 +23,7 @@ export default class PreloadScene extends Phaser.Scene {
     const centerY = height / 2;
 
     // Small animation
-    const symbol = SpriteUtils.addImage(this, centerX, centerY, 'symbol1');
+    const symbol = SpriteUtils.addImage(this, centerX, centerY, 'symbol-2a');
     gsap.to(symbol, {
       y: centerY + 10, 
       scaleX: 1.1,

@@ -288,7 +288,6 @@ atlasListByScene.forEach((atlasList, scene) => {
         const atlasData = JSON.parse(fs.readFileSync(atlasFullPath, 'utf8'));
 
         if(atlasData.textures){
-            console.log(atlasData.textures[0].frames)
             atlasData.textures[0].frames.forEach(frame => {
                 const key = frame.filename;
                 checkForDuplicateKeys(key, atlasFullPath);  // Check for duplicates

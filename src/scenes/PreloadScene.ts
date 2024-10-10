@@ -10,7 +10,7 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('symbol1', 'assets/art/symbol-2.png');
+    SpriteUtils.loadArtForScene(this, 'preload')
   }
 
   create() {
@@ -18,7 +18,7 @@ export default class PreloadScene extends Phaser.Scene {
     const centerY = this.scale.height/2;
 
     // Small animation
-    const symbol = SpriteUtils.addImage(this, centerX, centerY, 'symbol1');
+    const symbol = SpriteUtils.addImage(this, centerX, centerY, 'symbol-2a');
     gsap.to(symbol, {
       y: centerY + 10, 
       scaleX: 1.1,

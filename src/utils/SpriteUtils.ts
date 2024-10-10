@@ -11,6 +11,10 @@ export default class SpriteUtils{
             scene.load.image(key, imagesMap.get(key));
         }
 
+        // for(let i=0; i< 2000; i++){
+        //     scene.load.image('azaza'+i, 'azaza'+i);
+        // }
+
         let atlasesMap = ATLAS_LIST_BY_SCENE.get(sceneKey)!;
         for(let key of atlasesMap.keys()){
             scene.load.atlas(key, atlasesMap.get(key)?.replace('json', 'png'), atlasesMap.get(key));
@@ -88,6 +92,7 @@ export default class SpriteUtils{
     }
     
     private static loadArtForKey(scene:Phaser.Scene, key: string) : Promise<void> {
+
         return new Promise((resolve, reject) => {
             let atlasKey = ATLAS_BY_IMAGE_MAPPING.get(key);
             if(atlasKey) {

@@ -13,8 +13,10 @@ export const IMAGE_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
         ['cloud3', 'assets/art-loading/test/_test2/cloud3.png?755c722fa07cee346821c3404da3bf2d']
     ])],
     ['main', new Map([
-        ['background', 'assets/_art-optimized/art-main/background.png?5692611087a9c7dd75a8df842a77830e'],
-        ['symbol-2', 'assets/_art-optimized/art-main/symbol-2.png?f799e40d4b26d46c509fab10fbb7a284']
+        ['background', 'assets/_art-optimized/art-main/background.png?5692611087a9c7dd75a8df842a77830e']
+    ])],
+    ['preload', new Map([
+        ['symbol-2a', 'assets/art-preload/symbol-2a.png?f799e40d4b26d46c509fab10fbb7a284']
     ])]
 ]);
 
@@ -24,6 +26,9 @@ export const ATLAS_LIST_BY_SCENE: Map<string, Map<string, string>> = new Map([
     ])],
     ['main', new Map([
         ['_main-atlas', 'assets/_art-optimized/art-main/_main-atlas.json?8d971fe95fea47d9e9981840ee6e7462']
+    ])],
+    ['preload', new Map([
+    // No entries
     ])]
 ]);
 
