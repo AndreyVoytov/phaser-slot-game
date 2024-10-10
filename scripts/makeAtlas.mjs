@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { findDirectories, createAtlas, consoleLog, consoleSuccess, consoleError } from './utils.js';
+import { findDirectories, createAtlas, consoleLog, consoleSuccess, consoleError, getAllFilesRecursively } from './utils.js';
 import imagemin from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
 import imageminMozjpeg from 'imagemin-mozjpeg';
@@ -12,23 +12,39 @@ const __dirname = path.dirname(__filename);
 const assetsDir = path.resolve(__dirname, '../assets');
 const outputFiles = [];
 
+function getAtlasDirectories(dir, files = []) {
+  const items = fs.readdirSync(dir);
+  items.forEach(item => {
+      const fullPath = path.join(dir, item);
+      if (fs.statSync(fullPath).isDirectory()){
+        if(item.startsWith('_')) {
+          files.push(fullPath);
+        } else {
+          getAtlasDirectories(fullPath, files);
+        }
+      }
+  });
+  return files;
+};
+
 // Atlas generation function
 async function generateAtlases() {
   const artDirs = findDirectories(assetsDir, 'art-');
 
   for (const artDir of artDirs) {
     const artDirPath = path.join(assetsDir, artDir);
-    const atlasSourceFolders = findDirectories(artDirPath, '_');
-
+    const atlasSourceFolders = getAtlasDirectories(artDirPath); 
+    
     for (const atlasSourceFolder of atlasSourceFolders) {
-      const srcPath = path.join(artDirPath, atlasSourceFolder);
+      const atlasSourceFolderRelative = path.relative(artDirPath, atlasSourceFolder);
+      const srcPath = atlasSourceFolder;
       const destFolder = path.join(assetsDir, '_art-optimized', artDir);
 
       // Ensure that folder exists
       if (!fs.existsSync(destFolder)) {
         fs.mkdirSync(destFolder, { recursive: true });
       }
-      const imageOutputPath = path.join(destFolder, atlasSourceFolder);
+      const imageOutputPath = path.join(destFolder, atlasSourceFolderRelative);
 
       // Waiting for atlas generation to complete
       await createAtlas(srcPath, imageOutputPath);

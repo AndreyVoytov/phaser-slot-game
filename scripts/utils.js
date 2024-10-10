@@ -78,7 +78,6 @@ function createAtlas(inputFolderPath, outputFilePath) {
         return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
       })
       .map(file => path.join(inputFolderPath, file));
-
     if (images.length === 0) {
       return reject(new Error('No images found in the specified folder ' + inputFolderPath.split('assets')[1]));
     }
@@ -91,6 +90,12 @@ function createAtlas(inputFolderPath, outputFilePath) {
       }
 
       try {
+        fs.mkdirSync(path.dirname(outputFilePath), { recursive: true }, (err) => {
+          if (err) {
+            return consoleError(`Error creating directories: ${err}`);
+          }
+        });
+
         fs.writeFileSync(`${outputFilePath}.png`, result.image);
         const coordinates = result.coordinates;
         const properties = result.properties;
