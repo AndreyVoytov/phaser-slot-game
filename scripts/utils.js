@@ -90,11 +90,10 @@ function createAtlas(inputFolderPath, outputFilePath) {
       }
 
       try {
-        fs.mkdirSync(path.dirname(outputFilePath), { recursive: true }, (err) => {
-          if (err) {
-            return consoleError(`Error creating directories: ${err}`);
-          }
-        });
+        // Ensure that folder exists
+        if (!fs.existsSync(path.dirname(outputFilePath))) {
+          fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
+        }
 
         fs.writeFileSync(`${outputFilePath}.png`, result.image);
         const coordinates = result.coordinates;

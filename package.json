@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "webpack serve --open",
     "build": "webpack --mode production",
-    "image": "node scripts/makeImageConfig.js",
-    "atlas": "node scripts/makeAtlas.mjs"
+    "image": "node scripts/generateImageConfig.js",
+    "optimize":  "node scripts/makeAtlas.mjs && node scripts/makeImage.mjs && node scripts/generateImageConfig.js",
+
+    "make-atlas": "node scripts/makeAtlas.mjs",
+    "make-image": "node scripts/makeImage.mjs"
   },
   "keywords": [],
   "author": "",

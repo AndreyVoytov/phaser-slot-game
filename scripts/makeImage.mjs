@@ -1,7 +1,8 @@
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { findDirectories, createAtlas, consoleLog, consoleSuccess, consoleError } from './utils.js';
+import { findDirectories, createAtlas, consoleLog, consoleSuccess, consoleError, getAllFilesRecursively } from './utils.js';
 import imagemin from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
 import imageminMozjpeg from 'imagemin-mozjpeg';
@@ -12,43 +13,32 @@ const __dirname = path.dirname(__filename);
 const assetsDir = path.resolve(__dirname, '../assets');
 const outputFiles = [];
 
-function getAtlasDirectories(dir, files = []) {
-  const items = fs.readdirSync(dir);
-  items.forEach(item => {
-      const fullPath = path.join(dir, item);
-      if (fs.statSync(fullPath).isDirectory()){
-        if(item.startsWith('_')) {
-          files.push(fullPath);
-        } else {
-          getAtlasDirectories(fullPath, files);
-        }
-      }
-  });
-  return files;
-};
-
 // Atlas generation function
-async function generateAtlases() {
+async function copyImages() {
   const artDirs = findDirectories(assetsDir, 'art-');
 
   for (const artDir of artDirs) {
     const artDirPath = path.join(assetsDir, artDir);
-    const atlasSourceFolders = getAtlasDirectories(artDirPath); 
-    
-    for (const atlasSourceFolder of atlasSourceFolders) {
-      const atlasSourceFolderRelative = path.relative(artDirPath, atlasSourceFolder);
-      const srcPath = atlasSourceFolder;
-      const destFolder = path.join(assetsDir, '_art-optimized', artDir);
+    const allFiles = getAllFilesRecursively(artDirPath);
+    const imageFiles = allFiles.filter(
+        file => (file.endsWith('.png') || file.endsWith('.jpg')) && !file.includes('_')
+    );
+
+    for (const imageFile of imageFiles) {
+      let outputPath = path.join(path.relative(artDirPath, imageFile));
+      outputPath = path.join(assetsDir, '_art-optimized', artDir, outputPath);
 
       // Ensure that folder exists
-      if (!fs.existsSync(destFolder)) {
-        fs.mkdirSync(destFolder, { recursive: true });
+      if (!fs.existsSync(path.dirname(outputPath))) {
+        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       }
-      const imageOutputPath = path.join(destFolder, atlasSourceFolderRelative);
 
-      // Waiting for atlas generation to complete
-      await createAtlas(srcPath, imageOutputPath);
-      outputFiles.push(`${imageOutputPath}.png`);
+      // await fsPromises.access(imageFile, fs.constants.R_OK);
+      // await fsPromises.access(path.dirname(outputPath), fs.constants.W_OK);
+
+      await fsPromises.copyFile(imageFile, outputPath);
+
+      outputFiles.push(outputPath);
     }
   }
 }
@@ -74,7 +64,7 @@ async function compressImages(inputFiles) {
         consoleLog(`Compression completed for image: ${filePath.split('assets')[1]}`);
       })
     );
-    consoleSuccess('All atlases compressed');
+    consoleSuccess('All images compressed');
   } catch (error) {
     consoleError('Error during image compression:' + error);
   }
@@ -83,7 +73,7 @@ async function compressImages(inputFiles) {
 // Main async functions
 (async () => {
   try {
-    await generateAtlases();
+    await copyImages();
     await compressImages(outputFiles);
   } catch (error) {
     consoleError('Error during atlas processing:' + error);
