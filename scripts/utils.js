@@ -3,6 +3,7 @@ const path = require('path');
 const Spritesmith = require('spritesmith');
 const Handlebars = require('handlebars');
 const spritesheetTemplates = require('spritesheet-templates');
+const { setHash } = require('./hashHelper');
 
 function findDirectories(baseDir, prefix) {
   const artDirs = [];
@@ -70,17 +71,9 @@ function getConsolePrefix(){
   return '[npm run ' + process.env.npm_lifecycle_event + '] ';
 }
 
-function createAtlas(inputFolderPath, outputFilePath) {
+//(TODO move helperAtlas)
+function createAtlas(images, outputFilePath) {
   return new Promise((resolve, reject) => {
-    const images = fs.readdirSync(inputFolderPath)
-      .filter(file => {
-        const ext = path.extname(file).toLowerCase();
-        return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
-      })
-      .map(file => path.join(inputFolderPath, file));
-    if (images.length === 0) {
-      return reject(new Error('No images found in the specified folder ' + inputFolderPath.split('assets')[1]));
-    }
 
     // Create atlas
     Spritesmith.run({ src: images }, function (err, result) {

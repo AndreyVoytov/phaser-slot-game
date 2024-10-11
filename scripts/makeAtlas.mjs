@@ -5,6 +5,7 @@ import { findDirectories, createAtlas, consoleLog, consoleSuccess, consoleError 
 import imagemin from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
 import imageminMozjpeg from 'imagemin-mozjpeg';
+import { setHash } from './hashHelper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,10 +45,26 @@ async function generateAtlases() {
       if (!fs.existsSync(destFolder)) {
         fs.mkdirSync(destFolder, { recursive: true });
       }
-      const imageOutputPath = path.join(destFolder, atlasSourceFolderRelative);
+      
+      // Filter images to make atlas
+      const images = fs.readdirSync(srcPath)
+      .filter(file => {
+        const ext = path.extname(file).toLowerCase();
+        return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
+      })
+      .map(file => path.join(srcPath, file));
+      if (images.length === 0) {
+        return reject(new Error('No images found in the specified folder ' + srcPath.split('assets')[1]));
+      }
+
+      // Remember hash
+      images.forEach(image => {
+        setHash(path.relative(assetsDir, image));
+      })
 
       // Waiting for atlas generation to complete
-      await createAtlas(srcPath, imageOutputPath);
+      const imageOutputPath = path.join(destFolder, atlasSourceFolderRelative);
+      await createAtlas(images, imageOutputPath);
       outputFiles.push(`${imageOutputPath}.png`);
     }
   }

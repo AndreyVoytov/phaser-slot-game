@@ -6,6 +6,7 @@ import { findDirectories, createAtlas, consoleLog, consoleSuccess, consoleError,
 import imagemin from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
 import imageminMozjpeg from 'imagemin-mozjpeg';
+import { setHash } from './hashHelper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,6 +36,7 @@ async function copyImages() {
 
       // await fsPromises.access(imageFile, fs.constants.R_OK);
       // await fsPromises.access(path.dirname(outputPath), fs.constants.W_OK);
+      setHash(path.relative(assetsDir, imageFile));
 
       await fsPromises.copyFile(imageFile, outputPath);
 
@@ -43,7 +45,7 @@ async function copyImages() {
   }
 }
 
-// Image compression function (TODO move to utils)
+// Image compression function (TODO move helperImage)
 async function compressImages(inputFiles) {
   try {
     await Promise.all(

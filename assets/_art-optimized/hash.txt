@@ -1,6 +1,5 @@
 /art-loading/_loading-atlas/progress-bg.png 33364b0e43d8da41c8309972fd07eb52
 /art-loading/_loading-atlas/progress.png 87edd25fcf5505f81cb3fc498fa3c3b2
-
 /art-main/_main-atlas/symbol-2.png f799e40d4b26d46c509fab10fbb7a284
 /art-main/_main-atlas/reel-frame.png 9053c3a16023e29e97cbc4d354a7db68
 /art-main/_main-atlas/sound-off.png d172c18822a5f896743e39ee42cb0607
@@ -9,6 +8,11 @@
 /art-main/_main-atlas/symbol-1.png 365d9d9ada68053b2bfc1a68543df706
 /art-main/_main-atlas/symbol-3.png add14e3c193ac8e5906f0236e0a4ef4a
 /art-main/_main-atlas/spin-button-pressed.png 104fa20e808763d26421bb570a401621
-
 /art-main/background.png 5692611087a9c7dd75a8df842a77830e
 /art-main/symbol-2.png f799e40d4b26d46c509fab10fbb7a284
+/art-loading/cloud.png 755c722fa07cee346821c3404da3bf2d
+/art-loading/test/cloud2.png 755c722fa07cee346821c3404da3bf2d
+/art-loading/test/test3/cloud4.png 755c722fa07cee346821c3404da3bf2d
+/art-main/background.png 5692611087a9c7dd75a8df842a77830e
+/art-preload/symbol-2a.png f799e40d4b26d46c509fab10fbb7a284
+/art-loading/test/_test2/cloud3.png 755c722fa07cee346821c3404da3bf2d
