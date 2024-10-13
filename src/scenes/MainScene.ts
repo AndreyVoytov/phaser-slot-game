@@ -10,6 +10,9 @@ import { GoblinAnimationType, GoblinSkinType, GoblinSpine } from "../animations/
 import { SymbolType } from "../enums/SymbolType";
 import SymbolUtils from "../utils/SymbolUtils";
 import SpriteUtils from "../utils/SpriteUtils";
+import { CombinationManager } from "../managers/CombinationManager";
+import { AnimationMain } from "../config/AnimationConfig";
+import AnimationUtils from "../utils/AnimationUtils";
 
 
 export default class MainScene extends Phaser.Scene {
@@ -21,19 +24,22 @@ export default class MainScene extends Phaser.Scene {
     private reels: Reel[] = [];
     private spinButton!: Phaser.GameObjects.Image;
     private goblin!: GoblinSpine;
+    private spinsCount = 0;
     
     @lazyInject(TYPES.AudioManager)
     private audioManager!: AudioManager;
 
     @lazyInject(TYPES.SymbolStore)
     private symbolStore!: SymbolStore;
+    
+    @lazyInject(TYPES.CombinationManager)
+    private combinationManager!: CombinationManager;
 
     constructor() {
         super('main');
     }
 
     create() {
-                
         // Add background, frame and goblin
         const centerX = this.scale.width/2;
         SpriteUtils.addImage(this, centerX, 430, 'background');
@@ -89,7 +95,8 @@ export default class MainScene extends Phaser.Scene {
 
     private spinReels() {
         // Get spin results from server
-        this.symbolStore.fetchSpinResult().then(spinResults => {
+        this.symbolStore.fetchSpinResult(this.reels, this.spinsCount).then(spinResults => {
+            this.spinsCount ++;
 
             // Run spin animation for each reel
             const spinAnimationPromises: Promise<void>[] = [];
@@ -109,14 +116,9 @@ export default class MainScene extends Phaser.Scene {
             Promise.all(spinAnimationPromises).then(() => {
 
                 // Process win
-                if (this.reels.every((val) => val.getCurrentSymbolType() == this.reels[0].getCurrentSymbolType())) {
-                    this.sound.play('win', {volume: 0.1});
-                    this.showWinTextInfo(this.reels[0].getCurrentSymbolType());
-
-                    // Change goblin spine animation
-                    this.goblin.getSpineState().animation = GoblinAnimationType.IIdle;
-                    this.goblin.getSpineState().skin = GoblinSkinType.GoblinGirl;
-                    this.goblin.updateAnimation();
+                let animation = this.combinationManager.getSpecialAnimation(this.reels.map(r => r.getCurrentSymbolType()))
+                if (animation) {
+                    this.playAnimation(animation);
 
                     // Delay to enjoy win
                     this.time.delayedCall(700, () => {
@@ -155,5 +157,29 @@ export default class MainScene extends Phaser.Scene {
         this.time.delayedCall(1000, () => {
             loseText.destroy();
         });
+    }
+
+    private playAnimation(animationId:string) : void{
+        switch(animationId){
+            case AnimationMain.WIGGLE_ROW:
+                this.sound.play('win', {volume: 0.1});
+                this.showWinTextInfo(this.reels[0].getCurrentSymbolType());
+
+                this.reels.forEach(r => {
+                    AnimationUtils.emphasize(r.getCurrentSymbolImage());
+                })
+
+                AnimationUtils.animateCoins(this, this.scale.width/2, this.scale.height/2, 10);
+
+            case AnimationMain.CRACK_ACORN:
+
+
+        }
+
+         // Change goblin spine animation
+         this.goblin.getSpineState().animation = GoblinAnimationType.IIdle;
+         // this.goblin.getSpineState().skin = GoblinSkinType.GoblinGirl;
+         this.goblin.updateAnimation();
+        
     }
 }

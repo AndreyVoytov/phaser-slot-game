@@ -13,6 +13,7 @@ export default class Reel {
     private symbolHeight: number;
     private symbolWidth: number;
     private currentSymbol!: number;
+    private symbols: Phaser.GameObjects.Image[] = [];
 
     constructor(scene: Phaser.Scene, x: number, y: number, pattern: SymbolType[]) {
         this.scene = scene;
@@ -30,6 +31,7 @@ export default class Reel {
         for (let i = 0; i < this.pattern.length * reelSymbolsCount; i++) {
             const symbol = this.pattern[i % this.pattern.length];
             const symbolSprite = SpriteUtils.addImage(scene, 0, i * this.symbolHeight, SymbolUtils.getImageBySymbol(symbol));
+            this.symbols.push(symbolSprite);
             this.container.add(symbolSprite);
         }
         this.applyMask();
@@ -37,6 +39,14 @@ export default class Reel {
 
     public getCurrentSymbolType() : SymbolType {
         return this.pattern[this.currentSymbol % this.pattern.length];
+    }
+
+    public getCurrentSymbolImage() : Phaser.GameObjects.Image {
+        return this.symbols[this.currentSymbol % this.pattern.length];
+    }
+
+    public getCurrentSymbolIndex() : number {
+        return this.currentSymbol % this.pattern.length;
     }
     
     //spin logic
